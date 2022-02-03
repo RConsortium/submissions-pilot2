@@ -1,2 +1,6 @@
-# submissions-pilot2
-development repo for pilot1 submission to FDA
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/RConsortium/submissions-pilot2/workflows/R-CMD-check/badge.svg)](https://rconsortium.github.io/submissions-pilot2/)
+<!-- badges: end -->
+
+## Overview

@@ -1,0 +1,25 @@
+Package: pilot2
+Type: Package
+Title: Insert Package Title
+Version: 0.0.0.9000
+Authors@R: c(
+        person("xxx", email = "xxx@xxx.com", role = c("aut", "cre")),
+        person("copyright", role = c("cph"))
+       )
+Description: Insert Package Description. 
+Depends: R (>= 3.6.0)
+License: file LICENSE
+Imports: 
+Suggests: 
+    devtools,
+    testthat,
+    knitr,
+    rmarkdown,
+    covr,
+    dplyr
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)  
+Rmarkdwon: echo = TRUE
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
