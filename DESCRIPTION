@@ -1,6 +1,6 @@
-Package: pilot2
+Package: pilot2wrappers
 Type: Package
-Title: Insert Package Title
+Title: R Consortium R Submission Pilot 2
 Version: 0.0.0.9000
 Authors@R: c(
         person("xxx", email = "xxx@xxx.com", role = c("aut", "cre")),
