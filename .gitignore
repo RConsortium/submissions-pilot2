@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+pilot1wrappers.Rcheck/
+pilot1wrappers*.tar.gz
+pilot1wrappers*.tgz
+docs
+inst/doc

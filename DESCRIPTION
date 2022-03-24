@@ -1,6 +1,6 @@
-Package: pilot2
+Package: pilot2wrappers
 Type: Package
-Title: Insert Package Title
+Title: R Consortium R Submission Pilot 2
 Version: 0.0.0.9000
 Authors@R: c(
         person("xxx", email = "xxx@xxx.com", role = c("aut", "cre")),
@@ -21,5 +21,5 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)  
 Rmarkdwon: echo = TRUE
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 VignetteBuilder: knitr
