@@ -33,21 +33,21 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   output$tbl_demog <- renderUI({
-    source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/module/out_demograph.R"))$value
+    source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/server/out_demograph.R"))$value
   })
   
   output$plot_km <- renderPlot({ KM })
   
   output$tbl_primary <- renderUI({
-    source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/module/out_primary.R"))$value
+    source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/server/out_primary.R"))$value
   })
   
   output$tbl_efficacy_1 <- reactable::renderReactable({
-    source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/module/out_eff_1.R"))$value
+    source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/server/out_eff_1.R"))$value
   })
 
   output$tbl_efficacy_2 <- reactable::renderReactable({
-    source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/module/out_eff_2.R"))$value
+    source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/server/out_eff_2.R"))$value
   })
 }
  
