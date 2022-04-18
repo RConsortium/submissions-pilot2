@@ -52,7 +52,7 @@ efficacy_models <- function(data, var=NULL, wk=NULL) {
   ancova <- drop1(model1, .~., test="F")
   
   # Pull it out into a table
-  sect1 <- tibble(row_label=c('p-value(Dose Response) [1][2]'),
+  sect1 <- tibble(row_label=c('&emsp;p-value(Dose Response) [1][2]'),
                   `81` = c(num_fmt(ancova[2, 'Pr(>F)'], int_len=4, digits=3, size=12))
   ) %>%
     pad_row()
@@ -100,7 +100,7 @@ efficacy_models <- function(data, var=NULL, wk=NULL) {
     pad_row()
   
   #Add in row_label
-  xan_lo['row_label'] <- c('p-value(Xan - Placebo) [1][3]', '  Diff of LS Means (SE)', '  95% CI', '')
+  xan_lo['row_label'] <- c('&emsp;p-value(Xan - Placebo) [1][3]', '&emsp;&emsp;Diff of LS Means (SE)', '&emsp;&emsp;95% CI', '')
   
   # Subset Xan_hi - Pbo into table variables
   xan_hi <- pw_data %>%
@@ -109,7 +109,7 @@ efficacy_models <- function(data, var=NULL, wk=NULL) {
     select(`81`=value) %>%
     pad_row()
   # Add in row_label
-  xan_hi['row_label'] <- c('p-value(Xan - Placebo) [1][3]', '  Diff of LS Means (SE)', '  95% CI', '')
+  xan_hi['row_label'] <- c('&emsp;p-value(Xan - Placebo) [1][3]', '&emsp;&emsp;Diff of LS Means (SE)', '&emsp;&emsp;95% CI', '')
   xan_hi['ord'] <- c(1,2,3,4) # Order for sorting
   
   # Subset Xan_Hi - Xan_Lo into table variable
@@ -118,7 +118,7 @@ efficacy_models <- function(data, var=NULL, wk=NULL) {
     # Rename to the table display variable
     select(`81`=value)
   # Add in row_label
-  xan_xan['row_label'] <- c('p-value(Xan High - Xan Low) [1][3]', '  Diff of LS Means (SE)', '  95% CI')
+  xan_xan['row_label'] <- c('&emsp;p-value(Xan High - Xan Low) [1][3]', '&emsp;&emsp;Diff of LS Means (SE)', '&emsp;&emsp;95% CI')
   xan_xan['ord'] <- c(5,6,7) # Order for sorting
   
   # Pack it all together
