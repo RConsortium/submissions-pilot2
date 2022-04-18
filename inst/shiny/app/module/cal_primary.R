@@ -31,8 +31,8 @@ sum_data <- t %>%
   nest_rowlabels() %>% 
   select(-starts_with('ord')) %>% 
   add_column_headers(
-    paste0("|Placebo\\line(N=**Placebo**)| Xanomeline Low Dose\\line(N=**Xanomeline Low Dose**) ", 
-           "| Xanomeline High Dose\\line(N=**Xanomeline High Dose**)"),
+    paste0("|Placebo</br>(N=**Placebo**)| Xanomeline Low Dose</br>(N=**Xanomeline Low Dose**) ", 
+           "| Xanomeline High Dose</br>(N=**Xanomeline High Dose**)"),
     header_n(t)
   )
 
@@ -49,6 +49,6 @@ ht <- huxtable::as_hux(final, add_colnames = FALSE) %>%
   huxtable::set_align(1, 1:ncol(final), 'center') %>%
   huxtable::set_valign(1, 1:ncol(final), 'bottom') %>%
   huxtable::set_bottom_border(1, 1:ncol(final), 1) %>%
-  huxtable::set_width(1.2) %>%
+  huxtable::set_width(0.45) %>%
   huxtable::set_escape_contents(FALSE) %>%
-  huxtable::set_col_width(c(.5, 1/6, 1/6, 1/6))
+  huxtable::set_col_width(c(1/3, 1/6, 1/6, 1/6))
