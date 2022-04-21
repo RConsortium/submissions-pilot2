@@ -14,7 +14,7 @@ t <- tplyr_table(adas, TRTP) %>%
   set_desc_layer_formats(
     'n' = f_str('xx', n),
     'Mean (SD)' = f_str('xx.x (xx.xx)', mean, sd),
-    'Median (Range)' = f_str('xx.x (xxx;xx)', median, min, max)
+    'Median (Min; Max)' = f_str('xx.x (xxx;xx)', median, min, max)
   ) %>% 
   add_layer(
     group_desc(AVAL, where= AVISITN ==  0, by = "Baseline")
