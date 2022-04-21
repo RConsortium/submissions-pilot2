@@ -37,6 +37,10 @@ adlb <- haven::read_xpt(file.path(path$adam, "adlbc.xpt")) %>%
 ui <- fluidPage(
   tabsetPanel(
     tabPanel(
+      "Introduction",
+      shiny::includeMarkdown("include/about.md")
+    ),
+    tabPanel(
       "Demographic Table", 
       uiOutput("tbl_demog")
     ),
