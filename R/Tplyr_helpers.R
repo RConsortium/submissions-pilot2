@@ -17,12 +17,16 @@ nest_rowlabels <- function(.dat) {
     distinct(row_label1, ord_layer_index) %>% 
     rename(row_label = row_label1) %>% 
     mutate(
+      row_label = paste0("<b>", row_label, "</b>"),
       ord_layer_1 = 0, 
       ord_layer_2 = 0
     )
   
   .dat %>% 
     select(-row_label1, row_label=row_label2) %>% 
+    mutate(
+      row_label = paste0("&emsp;", row_label)
+    ) %>%
     bind_rows(stubs) %>% 
     arrange(ord_layer_index, ord_layer_1, ord_layer_2) %>% 
     mutate(
