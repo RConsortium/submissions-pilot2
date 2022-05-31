@@ -1,7 +1,7 @@
 adas <- adas %>%
   filter(
     EFFFL == "Y",
-    ITTFL=='Y',
+    ITTFL == 'Y',
     PARAMCD == 'ACTOT',
     ANL01FL == 'Y'
   )
@@ -29,10 +29,20 @@ t <- tplyr_table(adas, TRTP) %>%
 sum_data <- t %>% 
   build() %>% 
   nest_rowlabels() %>% 
-  select(-starts_with('ord')) %>% 
+  select(-starts_with('ord'))
+
+col_string <-
+  paste0(
+    " |",
+    ifelse("var1_Placebo" %in% names(sum_data), "Placebo</br>(N=**Placebo**)|", ""),
+    ifelse("var1_Xanomeline Low Dose" %in% names(sum_data), "Xanomeline Low Dose</br>(N=**Xanomeline Low Dose**)|", ""),
+    ifelse("var1_Xanomeline High Dose" %in% names(sum_data), "Xanomeline High Dose</br>(N=**Xanomeline High Dose**)|", "")
+  ) %>%
+  substr(1, nchar(.) - 1)
+
+sum_data <- sum_data %>%
   add_column_headers(
-    paste0("|Placebo</br>(N=**Placebo**)| Xanomeline Low Dose</br>(N=**Xanomeline Low Dose**) ", 
-           "| Xanomeline High Dose</br>(N=**Xanomeline High Dose**)"),
+    col_string,
     header_n(t)
   )
 
