@@ -15,11 +15,7 @@ library(emmeans)
 library(reactable)
 devtools::load_all()
 
-# Preamble ---------------------------------------------------------------------
 source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/startup.R"))
-#source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/pilot1.R"))
-
-# Data loading and analysis ----------------------------------------------------
 source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/tm_g_kmplot.R"))
 source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/tm_t_demographic.R"))
 source(file.path(rprojroot::find_root("DESCRIPTION"), "inst/shiny/app/tm_t_efficacy.R"))
