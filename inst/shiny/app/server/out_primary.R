@@ -1,1 +1,0 @@
-HTML(to_html(ht))
