@@ -16,3 +16,11 @@ output:
 
 ## Installing `teal` :
 Follow the link [here](https://github.com/insightsengineering/depository#readme)
+
+## Running application
+
+More instructions to come, but you can run the app by doing the following:
+
+* Clone this repository to your local machine
+* Open the project within RStudio, and run `renv::restore()` if prompted to restore the `{renv}` package library
+* Open the `app.R` script and run the application within RStudio by clicking the Run App button
