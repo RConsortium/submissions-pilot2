@@ -11,7 +11,9 @@ helpPopover <- function(content) {
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
+#' @importFrom shiny NS tagList fluidRow h4 h6 column fluidPage
+#' @importFrom graphics pairs 
+#' @importFrom stats lm sd
 ui_t_efficacy <- function(id, datasets) {
   ns <- NS(id) 
   fluidPage(

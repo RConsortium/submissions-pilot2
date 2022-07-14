@@ -6,7 +6,8 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
+#' @importFrom shiny NS tagList uiOutput
+#' @importFrom stats median sd
  ui_t_demographic <- function(id, datasets) {
    ns <- NS(id)
    uiOutput(ns("table"))

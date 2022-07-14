@@ -6,7 +6,7 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
+#' @importFrom shiny NS tagList plotOutput
 ui_g_kmplot <- function(id, datasets) {
   ns <- NS(id)
   plotOutput(ns("plot"))

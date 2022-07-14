@@ -6,7 +6,7 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tagList 
+#' @importFrom shiny NS tagList uiOutput
 ui_t_primary <- function(id, datasets) {
   ns <- NS(id)
   uiOutput(ns("table"))
@@ -70,7 +70,7 @@ srv_t_primary <- function(input, output, session, datasets) {
       huxtable::set_width(1) %>%
       huxtable::set_escape_contents(FALSE) %>%
       huxtable::set_col_width(c(.5, 1/6, 1/6, 1/6))
-    HTML(huxtable::to_html(ht))
+    htmltools::HTML(huxtable::to_html(ht))
   })
 
 }
