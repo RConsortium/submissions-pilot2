@@ -12,6 +12,8 @@
 #' @param wk Visit to be modeled
 #'
 #' @return Formatted dataframe
+#' 
+#' @importFrom dplyr filter mutate case_when rowwise select bind_rows arrange
 #' @export
 #'
 efficacy_models <- function(data, var=NULL, wk=NULL) {
@@ -52,7 +54,7 @@ efficacy_models <- function(data, var=NULL, wk=NULL) {
   ancova <- drop1(model1, .~., test="F")
   
   # Pull it out into a table
-  sect1 <- tibble(row_label=c('p-value(Dose Response) [1][2]'),
+  sect1 <- tibble::tibble(row_label=c('p-value(Dose Response) [1][2]'),
                   `81` = c(num_fmt(ancova[2, 'Pr(>F)'], int_len=4, digits=3, size=12))
   ) %>%
     pad_row()
@@ -74,23 +76,23 @@ efficacy_models <- function(data, var=NULL, wk=NULL) {
   cntrst_ci <- confint(cntrst_p)
   
   # merge and convert into dataframe
-  pw_data <- as_tibble(summary(cntrst_p)) %>%
-    merge(as_tibble(cntrst_ci)) %>%
+  pw_data <- tibble::as_tibble(summary(cntrst_p)) %>%
+    merge(tibble::as_tibble(cntrst_ci)) %>%
     rowwise() %>%
     # Create the display strings
     mutate(
       p = num_fmt(p.value, int_len=4, digits=3, size=12),
       diff_se = as.character(
-        glue('{num_fmt(estimate, int_len=2, digits=1, size=4)} ({num_fmt(SE, int_len=1, digits=2, size=4)})')
+        glue::glue('{num_fmt(estimate, int_len=2, digits=1, size=4)} ({num_fmt(SE, int_len=1, digits=2, size=4)})')
       ),
       ci = as.character(
-        glue('({num_fmt(lower.CL, int_len=2, digits=1, size=4)};{num_fmt(upper.CL, int_len=1, digits=1, size=3)})')
+        glue::glue('({num_fmt(lower.CL, int_len=2, digits=1, size=4)};{num_fmt(upper.CL, int_len=1, digits=1, size=3)})')
       )
     ) %>%
     # Clean out the numeric variables
     select(contrast, p, diff_se, ci) %>%
     # Transpose
-    pivot_longer(c('p', 'diff_se', 'ci'), names_to = 'row_label')
+    tidyr::pivot_longer(c('p', 'diff_se', 'ci'), names_to = 'row_label')
   
   # Subset Xan_Lo - Pbo into table variables
   xan_lo <- pw_data %>%

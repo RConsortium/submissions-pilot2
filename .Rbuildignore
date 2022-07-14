@@ -14,3 +14,7 @@
 ^adam$
 ^vignettes$
 ^\.github$
+^data-raw$
+dev_history.R
+^dev$
+$run_dev.*

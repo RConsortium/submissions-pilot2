@@ -10,13 +10,32 @@ Description: Insert Package Description.
 Depends: R (>= 3.6.0)
 License: file LICENSE
 Imports: 
+    config (>= 0.3.1),
+    golem (>= 0.3.1),
+    teal,
+    shiny (>= 1.7.1),
+    rtables,
+    haven,
+    dplyr,
+    Tplyr,
+    tidyr,
+    glue,
+    stringr,
+    huxtable,
+    ggplot2,
+    cowplot,
+    visR,
+    emmeans,
+    reactable,
+    magrittr,
+    teal.data,
+    tibble
 Suggests: 
     devtools,
     testthat,
     knitr,
     rmarkdown,
-    covr,
-    dplyr
+    covr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)  
