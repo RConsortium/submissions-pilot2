@@ -31,7 +31,9 @@ pkg_list <- c(
   "visR",
   "emmeans",
   "reactable",
-  "tibble"
+  "tibble",
+  "utils",
+  "htmltools"
 )
 
 purrr::map(pkg_list, ~usethis::use_package(.x))

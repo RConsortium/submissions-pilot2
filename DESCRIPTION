@@ -29,7 +29,9 @@ Imports:
     reactable,
     magrittr,
     teal.data,
-    tibble
+    tibble,
+    utils,
+    htmltools
 Suggests: 
     devtools,
     testthat,
