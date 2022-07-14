@@ -31,7 +31,8 @@ Imports:
     teal.data,
     tibble,
     utils,
-    htmltools
+    htmltools,
+    pkgload
 Suggests: 
     devtools,
     testthat,
