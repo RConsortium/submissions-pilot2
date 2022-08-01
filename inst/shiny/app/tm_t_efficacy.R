@@ -57,7 +57,7 @@ srv_t_efficacy <- function(input, output, session, datasets) {
     apr0ancova1 <- merge(t11, t12) %>%
       mutate(emmean_sd = SE * sqrt(df)) %>%
       mutate(
-        Trt = c("Study Drug", "Placebo"),
+        Trt = c("Xanomeline High Dose", "Placebo"),
         N1 = N,
         Mean1 = fmt_est(mean_bl, sd_bl),
         N2 = N,
@@ -79,7 +79,7 @@ srv_t_efficacy <- function(input, output, session, datasets) {
         upper = estimate + 1.96 * SE
       ) %>%
       mutate(
-        comp = "Study Drug vs. Placebo",
+        comp = "Xanomeline High Dose vs. Placebo",
         mean = fmt_ci(estimate, lower, upper),
         p = fmt_pval(p.value)
       ) %>%
@@ -97,6 +97,8 @@ srv_t_efficacy <- function(input, output, session, datasets) {
       apr0ancova3 = apr0ancova3
     )
   })
+  
+  
   output$tbl_efficacy_1 <- reactable::renderReactable({
     efficacy_results <- efficacy_results()
     apr0ancova1 <- efficacy_results$apr0ancova1
@@ -119,6 +121,8 @@ srv_t_efficacy <- function(input, output, session, datasets) {
       )
     )
   })
+  
+  
   output$tbl_efficacy_2 <- reactable::renderReactable({
     efficacy_results <- efficacy_results()
     apr0ancova2 <- efficacy_results$apr0ancova2
