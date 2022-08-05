@@ -21,3 +21,4 @@ $run_dev.*
 ^.devcontainer$
 ^app\.R$
 ^rsconnect$
+^LICENSE\.md$

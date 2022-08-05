@@ -8,7 +8,7 @@ Authors@R: c(
        )
 Description: Insert Package Description. 
 Depends: R (>= 3.6.0)
-License: file LICENSE
+License: GPL (>= 3)
 Imports: 
     config (>= 0.3.1),
     golem (>= 0.3.1),
