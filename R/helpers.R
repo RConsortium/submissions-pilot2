@@ -50,3 +50,14 @@ num_fmt <- Vectorize(function(var, digits=0, size=10, int_len=3) {
     side='right', size
   ))
 })
+
+#' style a tooltip produced by the tippy package
+#' 
+#' @param text String for text in tooltip
+#' @param font_size Font size (in pixels)
+#'
+#' @return HTML with font size applied
+#' @export
+tooltip_text <- function(text, font_size = 16) {
+  glue::glue("<span style='font-size:{font_size}px;'>{text}<span>")
+}

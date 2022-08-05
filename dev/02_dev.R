@@ -33,7 +33,8 @@ pkg_list <- c(
   "reactable",
   "tibble",
   "utils",
-  "htmltools"
+  "htmltools",
+  "tippy"
 )
 
 purrr::map(pkg_list, ~usethis::use_package(.x))

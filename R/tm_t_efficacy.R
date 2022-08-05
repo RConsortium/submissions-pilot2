@@ -2,6 +2,11 @@ helpPopover <- function(content) {
   tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
             title = content, shiny::icon("question-circle"))
 }
+# "first" h4 text popover
+# helpPopover("Table is based on participants who have observable data at Baseline and Week 20")
+
+# "second" h4 text popover
+# helpPopover("Inference in this table is based on a Analysis of Covariance (ANCOVA) model with treatment and baseline value as covariates.")
 
 #' ui_t_efficacy UI Function
 #'
@@ -14,30 +19,48 @@ helpPopover <- function(content) {
 #' @importFrom shiny NS tagList fluidRow h4 h6 column fluidPage
 #' @importFrom graphics pairs 
 #' @importFrom stats lm sd
+#' @import tippy
 ui_t_efficacy <- function(id, datasets) {
   ns <- NS(id) 
   fluidPage(
     tags$br(),
     tags$br(),
-    fluidRow(h4("Primary Endpoint Analysis: Glucose (mmol/L) - Summary at Week 20 LOCF",
-                helpPopover("Table is based on participants who have observable data at Baseline and Week 20")
-    ),
-    tags$br(),tags$br(),
-    column(width=10,reactable::reactableOutput(ns("tbl_efficacy_1"))) 
+    fluidRow(
+      tippy::tippy(
+        h4("Primary Endpoint Analysis: Glucose (mmol/L) - Summary at Week 20 LOCF"),
+        tooltip = tooltip_text("Table is based on participants who have observable data at Baseline and Week 20", 16),
+        #tooltip = "<span style='font-size:18px;'>Table is based on participants who have observable data at Baseline and Week 20<span>",
+        allowHTML = TRUE
+      ),
+      tags$br(),tags$br(),
+      column(
+        width=10,
+        reactable::reactableOutput(ns("tbl_efficacy_1"))
+      ) 
     ),
     
     tags$br(),
     tags$br(),
     tags$hr(),
-    fluidRow(h4("Pairwise Comparison",
-                helpPopover("Inference in this table is based on a Analysis of Covariance (ANCOVA) model with treatment and baseline value as covariates.")
+    fluidRow(
+      tippy::tippy(
+        h4("Pairwise Comparison"),
+        tooltip = tooltip_text("Inference in this table is based on a Analysis of Covariance (ANCOVA) model with treatment and baseline value as covariates.", 16),
+        allowHTML = TRUE
+      ),
+      tags$br(),
+      tags$br(),
+      column(
+        width=10,
+        reactable::reactableOutput(ns("tbl_efficacy_2"))
+      )
     ),
-    tags$br(),tags$br(),
-    column(width=10,reactable::reactableOutput(ns("tbl_efficacy_2")))),
     tags$br(),
     tags$br(),
     tags$hr(),
-    fluidRow(h6(tags$i("*Abbreviation: CI=Confidence Interval; LS=Least Squarses; SD=Standard Deviation")))
+    fluidRow(
+      h6(tags$i("*Abbreviation: CI=Confidence Interval; LS=Least Squarses; SD=Standard Deviation"))
+    )
   )
 }
 

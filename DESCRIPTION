@@ -32,7 +32,8 @@ Imports:
     tibble,
     utils,
     htmltools,
-    pkgload
+    pkgload,
+    tippy
 Suggests: 
     devtools,
     testthat,
