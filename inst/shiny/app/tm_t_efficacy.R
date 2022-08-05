@@ -32,110 +32,132 @@ ui_t_efficacy <- function(id, datasets) {
 srv_t_efficacy <- function(input, output, session, datasets) {
   efficacy_results <- reactive({
     adlb <- datasets$get_data("ADLB", filtered = TRUE)
-    gluc_lmfit <- adlb %>%
-      filter(AVISITN == 20) %>%
-      lm(CHG ~ BASE + TRTPN, data = .)
     
-    ## Raw summary statistics
-    t11 <- adlb %>%
-      filter(AVISITN == 20) %>%
-      group_by(TRTPN, TRTP) %>%
-      summarise(
-        N = n(),
-        mean_bl = mean(BASE),
-        sd_bl = sd(BASE),
-        mean_chg = mean(CHG),
-        sd_chg = sd(CHG),
-        mean = mean(AVAL),
-        sd = sd(AVAL)
-      )
+    check_trt <- all(c("Xanomeline High Dose", "Placebo")%in%adlb$TRTP) 
     
-    ## Calculate LS mean
-    t12 <- emmeans(gluc_lmfit, "TRTPN")
+    if(check_trt){
+      gluc_lmfit <- adlb %>%
+        filter(AVISITN == 20) %>%
+        lm(CHG ~ BASE + TRTPN, data = .)
+      
+      ## Raw summary statistics
+      t11 <- adlb %>%
+        filter(AVISITN == 20) %>%
+        group_by(TRTPN, TRTP) %>%
+        summarise(
+          N = n(),
+          mean_bl = mean(BASE),
+          sd_bl = sd(BASE),
+          mean_chg = mean(CHG),
+          sd_chg = sd(CHG),
+          mean = mean(AVAL),
+          sd = sd(AVAL)
+        )
+      
+      ## Calculate LS mean
+      t12 <- emmeans(gluc_lmfit, "TRTPN")
+      
+      ## Merge and format data for reporting
+      apr0ancova1 <- merge(t11, t12) %>%
+        mutate(emmean_sd = SE * sqrt(df)) %>%
+        mutate(
+          Trt = c("Xanomeline High Dose", "Placebo"),
+          N1 = N,
+          Mean1 = fmt_est(mean_bl, sd_bl),
+          N2 = N,
+          Mean2 = fmt_est(mean, sd),
+          N3 = N,
+          Mean3 = fmt_est(mean_chg, sd_chg),
+          CI = fmt_ci(emmean, lower.CL, upper.CL)
+        ) %>%
+        select(Trt:CI)
+      
+      
+      ## -----------------------------------------------------------------------------------------------------------------------------------
+      t2 <- data.frame(pairs(t12))
+      
+      ## Treatment Comparison
+      apr0ancova2 <- t2 %>%
+        mutate(
+          lower = estimate - 1.96 * SE,
+          upper = estimate + 1.96 * SE
+        ) %>%
+        mutate(
+          comp = "Xanomeline High Dose vs. Placebo",
+          mean = fmt_ci(estimate, lower, upper),
+          p = fmt_pval(p.value)
+        ) %>%
+        select(comp:p)
+      
+      ## -----------------------------------------------------------------------------------------------------------------------------------
+      ### Calculate root mean square and save data in output folder
+      apr0ancova3 <- data.frame(rmse = paste0(
+        "Root Mean Squared Error of Change = ",
+        formatC(sd(gluc_lmfit$residuals), digits = 2, format = "f", flag = "0")
+      ))
+    }else{
+      apr0ancova1 <- NULL
+      apr0ancova2 <- NULL
+      apr0ancova3 <- NULL
+    }
     
-    ## Merge and format data for reporting
-    apr0ancova1 <- merge(t11, t12) %>%
-      mutate(emmean_sd = SE * sqrt(df)) %>%
-      mutate(
-        Trt = c("Study Drug", "Placebo"),
-        N1 = N,
-        Mean1 = fmt_est(mean_bl, sd_bl),
-        N2 = N,
-        Mean2 = fmt_est(mean, sd),
-        N3 = N,
-        Mean3 = fmt_est(mean_chg, sd_chg),
-        CI = fmt_ci(emmean, lower.CL, upper.CL)
-      ) %>%
-      select(Trt:CI)
-    
-    
-    ## -----------------------------------------------------------------------------------------------------------------------------------
-    t2 <- data.frame(pairs(t12))
-    
-    ## Treatment Comparison
-    apr0ancova2 <- t2 %>%
-      mutate(
-        lower = estimate - 1.96 * SE,
-        upper = estimate + 1.96 * SE
-      ) %>%
-      mutate(
-        comp = "Study Drug vs. Placebo",
-        mean = fmt_ci(estimate, lower, upper),
-        p = fmt_pval(p.value)
-      ) %>%
-      select(comp:p)
-    
-    ## -----------------------------------------------------------------------------------------------------------------------------------
-    ### Calculate root mean square and save data in output folder
-    apr0ancova3 <- data.frame(rmse = paste0(
-      "Root Mean Squared Error of Change = ",
-      formatC(sd(gluc_lmfit$residuals), digits = 2, format = "f", flag = "0")
-    ))
+    # outputing reactive efficacy_results()
     list(
       apr0ancova1 = apr0ancova1,
       apr0ancova2 = apr0ancova2,
       apr0ancova3 = apr0ancova3
     )
+    
   })
+  
+  
   output$tbl_efficacy_1 <- reactable::renderReactable({
     efficacy_results <- efficacy_results()
     apr0ancova1 <- efficacy_results$apr0ancova1
-    coln =c("Treatment",
-            "N","Mean (SD)",
-            "N","Mean (SD)",
-            "N","Mean (SD)","LS Mean (95% CI)")
-    colgr=c(1,2,2,3,3,4,4,4)
-    colgrn=c("","Baseline","Week 20","Change from Baseline")
-    collist = lapply(1:ncol(apr0ancova1),function(xx) colDef(name=coln[xx]))
-    names(collist) = names(apr0ancova1)
- 
-    reactable(
-      apr0ancova1,
-      columns = collist,
-      columnGroups = list(
-        colGroup(name = colgrn[2], columns = names(apr0ancova1)[colgr==2]),
-        colGroup(name = colgrn[3], columns = names(apr0ancova1)[colgr==3]),
-        colGroup(name = colgrn[4], columns = names(apr0ancova1)[colgr==4])
+    
+    if(!is.null(apr0ancova1)){
+      coln =c("Treatment",
+              "N","Mean (SD)",
+              "N","Mean (SD)",
+              "N","Mean (SD)","LS Mean (95% CI)")
+      colgr=c(1,2,2,3,3,4,4,4)
+      colgrn=c("","Baseline","Week 20","Change from Baseline")
+      collist = lapply(1:ncol(apr0ancova1),function(xx) colDef(name=coln[xx]))
+      names(collist) = names(apr0ancova1)
+      
+      reactable(
+        apr0ancova1,
+        columns = collist,
+        columnGroups = list(
+          colGroup(name = colgrn[2], columns = names(apr0ancova1)[colgr==2]),
+          colGroup(name = colgrn[3], columns = names(apr0ancova1)[colgr==3]),
+          colGroup(name = colgrn[4], columns = names(apr0ancova1)[colgr==4])
+        )
       )
-    )
+     }else{stop("Data Filter is set inappropriately: There should be at least 1 patient in both 'Xanomeline High Dose' and 'Placebo' treatment group !!")}
   })
+  
+  
   output$tbl_efficacy_2 <- reactable::renderReactable({
     efficacy_results <- efficacy_results()
     apr0ancova2 <- efficacy_results$apr0ancova2
     apr0ancova3 <- efficacy_results$apr0ancova3
-    coln =c("",
-            "Difference in LS Mean (95% CI)",
-            "p-Value")
-    collist = lapply(1:ncol(apr0ancova2),function(xx){
-      if(xx>1){colDef(name=coln[xx])
-      }else{colDef(name=coln[xx],footer=apr0ancova3$rmse)}
-    })
-    names(collist) = names(apr0ancova2)
     
-    reactable(
-      apr0ancova2,
-      columns = collist,
-      defaultColDef = colDef(footerStyle = list(fontStyle = "itatlic"))
-    )
+    if(!is.null(apr0ancova2)){
+      coln =c("",
+              "Difference in LS Mean (95% CI)",
+              "p-Value")
+      collist = lapply(1:ncol(apr0ancova2),function(xx){
+        if(xx>1){colDef(name=coln[xx])
+        }else{colDef(name=coln[xx],footer=apr0ancova3$rmse)}
+      })
+      names(collist) = names(apr0ancova2)
+      
+      reactable(
+        apr0ancova2,
+        columns = collist,
+        defaultColDef = colDef(footerStyle = list(fontStyle = "itatlic"))
+      )
+    }else{NULL}
   })
 }
