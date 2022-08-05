@@ -1,13 +1,3 @@
-helpPopover <- function(content) {
-  tags$abbr(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
-            title = content, shiny::icon("question-circle"))
-}
-# "first" h4 text popover
-# helpPopover("Table is based on participants who have observable data at Baseline and Week 20")
-
-# "second" h4 text popover
-# helpPopover("Inference in this table is based on a Analysis of Covariance (ANCOVA) model with treatment and baseline value as covariates.")
-
 #' ui_t_efficacy UI Function
 #'
 #' @description A shiny Module.
