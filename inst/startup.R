@@ -1,7 +1,11 @@
 # Project Level Setup
 R_version <- "4.2.0"																                  # set up project R version
 snapshot  <- "2022-02-01" 									                          # set up snapshot date
-repos     <- paste0("https://packagemanager.rstudio.com/cran/", snapshot)  # set up repository based on snapshot
+teal_snapshot <- "2022-06-09"
+repos <- c(
+  paste0("https://packagemanager.rstudio.com/cran/", snapshot), 
+  paste0("https://insightsengineering.github.io/depository/", teal_snapshot)  # set up repository based on snapshot
+)
 
 home      <- normalizePath(".") # set up home directory
 while(! "DESCRIPTION" %in% list.files(home)){
@@ -9,13 +13,7 @@ while(! "DESCRIPTION" %in% list.files(home)){
 }
 
 # A&R folder path (Do not edit information below)
-path <- list(
- home      = "",                   # Project home
- adam      = "adam",                 # ADaM data
- output    = "output"                # Output
-
-
-)
+path <- list(home = "")
 
 path <- lapply(path, function(x) file.path(home, x))
 
