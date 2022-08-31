@@ -6,8 +6,7 @@
 #'
 #' @param .dat Input data set - should come from a built Tplyr table. 
 #'
-#' @importFrom dplyr distinct rename bind_rows mutate select arrange across
-#' @importFrom dplyr starts_with
+#' @importFrom dplyr distinct rename bind_rows mutate select arrange across starts_with
 #' @importFrom tidyr replace_na
 #' 
 #' @return data.frame with row labels nested

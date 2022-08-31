@@ -5,5 +5,5 @@
 pilot1wrappers.Rcheck/
 pilot1wrappers*.tar.gz
 pilot1wrappers*.tgz
-docs
 inst/doc
+tmp/*

@@ -1,22 +1,51 @@
 Package: pilot2wrappers
 Type: Package
 Title: R Consortium R Submission Pilot 2
-Version: 0.0.0.9000
+Version: 0.2.0
 Authors@R: c(
-        person("xxx", email = "xxx@xxx.com", role = c("aut", "cre")),
+        person("Eric", "Nantz", email = "theRcast@gmail.com", role = c("aut", "cre")),
+        person("Yilong", "Zhang", role = c("aut")),
+        person("Heng", "Wang", role = c("aut")),
+        person("Gregory", "Chen", role = c("aut")),
+        person("Eli", "Miller", role = c("aut")),
+        person("Ning", "Leng", role = c("aut")),
         person("copyright", role = c("cph"))
        )
 Description: Insert Package Description. 
 Depends: R (>= 3.6.0)
-License: file LICENSE
+License: GPL (>= 3)
 Imports: 
+    config (>= 0.3.1),
+    golem (>= 0.3.1),
+    teal,
+    teal.data,
+    shiny (>= 1.7.1),
+    rtables,
+    haven,
+    dplyr,
+    Tplyr,
+    tidyr,
+    glue,
+    stringr,
+    huxtable,
+    ggplot2,
+    cowplot,
+    visR,
+    emmeans,
+    reactable,
+    magrittr,
+    tibble,
+    utils,
+    htmltools,
+    pkgload,
+    tippy,
+    markdown
 Suggests: 
     devtools,
     testthat,
     knitr,
     rmarkdown,
-    covr,
-    dplyr
+    covr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)  

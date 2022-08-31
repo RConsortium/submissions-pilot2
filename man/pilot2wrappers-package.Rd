@@ -9,7 +9,16 @@
 Insert Package Description.
 }
 \author{
-\strong{Maintainer}: xxx \email{xxx@xxx.com}
+\strong{Maintainer}: Eric Nantz \email{theRcast@gmail.com}
+
+Authors:
+\itemize{
+  \item Yilong Zhang
+  \item Heng Wang
+  \item Gregory Chen
+  \item Eli Miller
+  \item Ning Leng
+}
 
 Other contributors:
 \itemize{
