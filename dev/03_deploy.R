@@ -17,6 +17,18 @@
 ## Check the package before sending to prod
 devtools::check()
 
+# Build
+## Buld the package tarball and send to the renv cellar directory
+
+## Linux version
+devtools::build(path = "renv/cellar")
+
+## Windows version
+
+
+# Install to renv library
+renv::install("renv/cellar/pilot2wrappers_0.2.0.tar.gz")
+
 # Deploy
 
 ## Local, CRAN or Package Manager ---- 

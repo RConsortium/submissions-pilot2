@@ -21,7 +21,7 @@ srv_g_kmplot <- function(input, output, session, datasets) {
   output$plot <- renderPlot({
     adsl <- datasets$get_data("ADSL", filtered = TRUE)
     adtte <- datasets$get_data("ADTTE", filtered = TRUE)
-    anl <- adsl %>% 
+    anl <<- adsl %>% 
       dplyr::filter(
         SAFFL == "Y",
         STUDYID == "CDISCPILOT01"
