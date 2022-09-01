@@ -50,7 +50,7 @@ pkg_desc
 
 ## Pack Shiny Application
 
-The code below assembles the application's code and supporting files into a custom text file using `{pkglite}` and saved into `ectd/r0pkg.txt`. Please note that the size of this text file is approximately 37 megabytes due to the included data sets within the application.
+The code below assembles the application's code and supporting files into a custom text file using `{pkglite}` and saved into `ectd/r1pk1.txt`. Please note that the size of this text file is approximately 37 megabytes due to the included data sets within the application.
 
 ```{r}
 # specification for app.R file
@@ -75,6 +75,8 @@ renv_spec2 <- file_spec(
   recursive = FALSE
 )
 
+golem_spec <- file_auto("dev")
+
 file_ectd2 <- file_spec(
   ".",
   pattern = "^DESCRIPTION$|^NAMESPACE$|^README$|^README\\.md$|^NEWS$|^NEWS\\.md$|^LICENSE$|\\.Rbuildignore$|\\.Rprofile$",
@@ -90,16 +92,17 @@ path$home %>%
     file_auto("inst"), 
     app_spec, 
     renv_spec,
-    renv_spec2
+    renv_spec2,
+    golem_spec
   ) %>%
-  pack(output = "ectd/r0pkg.txt")
+  pack(output = "ectd/r1pkg.txt")
 ```
 
 ## Application Installation (Dry run) 
 
-To unpack the application source code and supporting files from the custom `ectd/r0pkg.txt` bundle and run the Shiny applicaton, perform the following steps in your preferred R development environment, such as RStudio or a R console session:
+To unpack the application source code and supporting files from the custom `ectd/r1pkg.txt` bundle and run the Shiny applicaton, perform the following steps in your preferred R development environment, such as RStudio or a R console session:
 
-1. Ensure that the working directory is set to the same location as the downloaded `r0pkg.txt` file, and run the following code: `pkglite::unpack(input = "r0pkg.txt", install = FALSE)`. You should see a series of messages indicating the application files being written to a subdirectory called `pilot2wrappers`.
+1. Ensure that the working directory is set to the same location as the downloaded `r1pkg.txt` file, and run the following code: `pkglite::unpack(input = "r0pkg.txt", install = FALSE)`. You should see a series of messages indicating the application files being written to a subdirectory called `pilot2wrappers`.
 1. Launch a new R session in the `pilot2wrappers` subdirectory. 
 1. Ensure that the package library is restored with `{renv}` by running the following code: `renv::restore()`. After confirmation, the packages used by the application will be downloaded and installed in a project-specific library.
 1. To run the application, you have the following choices. If you are using RStudio to view the application, open the `app.R` file and click the Run App button at the top of the file window. If you are using an R console, run the following code: `golem:::run_dev()`. 
