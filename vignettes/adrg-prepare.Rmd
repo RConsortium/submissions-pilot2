@@ -75,6 +75,13 @@ renv_spec2 <- file_spec(
   recursive = FALSE
 )
 
+renv_spec3 <- file_spec(
+  "renv/cellar",
+  pattern = "\\.tar.gz|\\.zip",
+  format = "binary",
+  recursive = TRUE
+)
+
 golem_spec <- file_auto("dev")
 
 file_ectd2 <- file_spec(
@@ -93,6 +100,7 @@ path$home %>%
     app_spec, 
     renv_spec,
     renv_spec2,
+    renv_spec3,
     golem_spec
   ) %>%
   pack(output = "ectd/r1pkg.txt")
