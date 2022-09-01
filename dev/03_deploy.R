@@ -24,7 +24,7 @@ devtools::check()
 devtools::build(path = "renv/cellar")
 
 ## Windows version
-
+devtools::build(path = "renv/cellar", binary = TRUE)
 
 # Install to renv library
 renv::install("renv/cellar/pilot2wrappers_0.2.0.tar.gz")
