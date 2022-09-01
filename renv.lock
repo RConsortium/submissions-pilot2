@@ -1330,6 +1330,38 @@
         "vctrs"
       ]
     },
+    "pilot2wrappers": {
+      "Package": "pilot2wrappers",
+      "Version": "0.2.0",
+      "Source": "Cellar",
+      "Hash": "898ea7b8224c18de92d1d3a8c499d356",
+      "Requirements": [
+        "Tplyr",
+        "config",
+        "cowplot",
+        "dplyr",
+        "emmeans",
+        "ggplot2",
+        "glue",
+        "golem",
+        "haven",
+        "htmltools",
+        "huxtable",
+        "magrittr",
+        "markdown",
+        "pkgload",
+        "reactable",
+        "rtables",
+        "shiny",
+        "stringr",
+        "teal",
+        "teal.data",
+        "tibble",
+        "tidyr",
+        "tippy",
+        "visR"
+      ]
+    },
     "pkgbuild": {
       "Package": "pkgbuild",
       "Version": "1.3.1",

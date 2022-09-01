@@ -490,7 +490,7 @@ Content:
         "Package": "R6",
         "Version": "2.5.1",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "470851b6d5d0ac559e9d01bb352b4021",
         "Requirements": []
       },
@@ -542,7 +542,7 @@ Content:
         "Package": "askpass",
         "Version": "1.1",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "e8a22846fff485f0be3770c2da758713",
         "Requirements": [
           "sys"
@@ -578,7 +578,7 @@ Content:
         "Package": "base64enc",
         "Version": "0.1-3",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "543776ae6848fde2f48ff3816d0628bc",
         "Requirements": []
       },
@@ -662,7 +662,7 @@ Content:
         "Package": "cachem",
         "Version": "1.0.6",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "648c5b3d71e6a37e3043617489a0a0e9",
         "Requirements": [
           "fastmap",
@@ -785,7 +785,7 @@ Content:
         "Package": "credentials",
         "Version": "1.3.2",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "93762d0a34d78e6a025efdbfb5c6bb41",
         "Requirements": [
           "askpass",
@@ -812,7 +812,7 @@ Content:
         "Package": "curl",
         "Version": "4.3.2",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "022c42d49c28e95d69ca60446dbabf88",
         "Requirements": []
       },
@@ -861,7 +861,7 @@ Content:
         "Package": "diffobj",
         "Version": "0.3.5",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "bcaa8b95f8d7d01a5dedfd959ce88ab8",
         "Requirements": [
           "crayon"
@@ -871,7 +871,7 @@ Content:
         "Package": "digest",
         "Version": "0.6.29",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "cf6b206a045a684728c3267ef7596190",
         "Requirements": []
       },
@@ -962,7 +962,7 @@ Content:
         "Package": "ellipsis",
         "Version": "0.3.2",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "bb0eec2fe32e88d9e2836c2f73ea2077",
         "Requirements": [
           "rlang"
@@ -1049,7 +1049,7 @@ Content:
         "Package": "formatters",
         "Version": "0.3.1",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "94fe1879a08dc2d575c3a5eeae33a7c9",
         "Requirements": [
           "htmltools"
@@ -1059,7 +1059,7 @@ Content:
         "Package": "fs",
         "Version": "1.5.2",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "7c89603d81793f0d5486d91ab1fc6f1d",
         "Requirements": []
       },
@@ -1161,7 +1161,7 @@ Content:
         "Package": "gh",
         "Version": "1.3.0",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "38c2580abbda249bd6afeec00d14f531",
         "Requirements": [
           "cli",
@@ -1307,7 +1307,7 @@ Content:
         "Package": "highr",
         "Version": "0.9",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "8eb36c8125038e648e5d111c0d7b2ed4",
         "Requirements": [
           "xfun"
@@ -1344,7 +1344,7 @@ Content:
         "Package": "htmlwidgets",
         "Version": "1.5.4",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "76147821cd3fcd8c4b04e1ef0498e7fb",
         "Requirements": [
           "htmltools",
@@ -1356,7 +1356,7 @@ Content:
         "Package": "httpuv",
         "Version": "1.6.5",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "97fe71f0a4a1c9890e6c2128afa04bc0",
         "Requirements": [
           "R6",
@@ -1434,7 +1434,7 @@ Content:
         "Package": "jquerylib",
         "Version": "0.1.4",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "5aab57a3bd297eee1c1d862735972182",
         "Requirements": [
           "htmltools"
@@ -1497,7 +1497,7 @@ Content:
         "Package": "later",
         "Version": "1.3.0",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "7e7b457d7766bc47f2a5f21cc2984f8e",
         "Requirements": [
           "Rcpp",
@@ -1538,7 +1538,7 @@ Content:
         "Package": "lifecycle",
         "Version": "1.0.1",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "a6b6d352e3ed897373ab19d8395c98d0",
         "Requirements": [
           "glue",
@@ -1595,7 +1595,7 @@ Content:
         "Package": "memoise",
         "Version": "2.0.1",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "e2817ccf4a065c5d9d7f2cfbe7c1d78c",
         "Requirements": [
           "cachem",
@@ -1617,7 +1617,7 @@ Content:
         "Package": "mime",
         "Version": "0.12",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "18e9c28c1d3ca1560ce30658b22ce104",
         "Requirements": []
       },
@@ -1719,11 +1719,43 @@ Content:
           "vctrs"
         ]
       },
+      "pilot2wrappers": {
+        "Package": "pilot2wrappers",
+        "Version": "0.2.0",
+        "Source": "Cellar",
+        "Hash": "898ea7b8224c18de92d1d3a8c499d356",
+        "Requirements": [
+          "Tplyr",
+          "config",
+          "cowplot",
+          "dplyr",
+          "emmeans",
+          "ggplot2",
+          "glue",
+          "golem",
+          "haven",
+          "htmltools",
+          "huxtable",
+          "magrittr",
+          "markdown",
+          "pkgload",
+          "reactable",
+          "rtables",
+          "shiny",
+          "stringr",
+          "teal",
+          "teal.data",
+          "tibble",
+          "tidyr",
+          "tippy",
+          "visR"
+        ]
+      },
       "pkgbuild": {
         "Package": "pkgbuild",
         "Version": "1.3.1",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "66d2adfed274daf81ccfe77d974c3b9b",
         "Requirements": [
           "R6",
@@ -1740,7 +1772,7 @@ Content:
         "Package": "pkgconfig",
         "Version": "2.0.3",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "01f28d4278f15c76cddbea05899c5d6f",
         "Requirements": []
       },
@@ -1878,7 +1910,7 @@ Content:
         "Package": "promises",
         "Version": "1.2.0.1",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "4ab2c43adb4d4699cf3690acd378d75d",
         "Requirements": [
           "R6",
@@ -1900,7 +1932,7 @@ Content:
         "Package": "purrr",
         "Version": "0.3.4",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "97def703420c8ab10d8f0e6c72101e02",
         "Requirements": [
           "magrittr",
@@ -1930,7 +1962,7 @@ Content:
         "Package": "rappdirs",
         "Version": "0.3.3",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "5e3c5dc0b071b21fa128676560dbe94d",
         "Requirements": []
       },
@@ -1938,7 +1970,7 @@ Content:
         "Package": "rcmdcheck",
         "Version": "1.4.0",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "8f25ebe2ec38b1f2aef3b0d2ef76f6c4",
         "Requirements": [
           "R6",
@@ -2030,7 +2062,7 @@ Content:
         "Package": "rematch2",
         "Version": "2.1.2",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "76c9e04c712a05848ae7a23d2f170a40",
         "Requirements": [
           "tibble"
@@ -2040,7 +2072,7 @@ Content:
         "Package": "remotes",
         "Version": "2.4.2",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "227045be9aee47e6dda9bb38ac870d67",
         "Requirements": []
       },
@@ -2048,7 +2080,7 @@ Content:
         "Package": "renv",
         "Version": "0.15.2",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "206c4ef8b7ad6fb1060d69aa7b9dfe69",
         "Requirements": []
       },
@@ -2208,7 +2240,7 @@ Content:
         "Package": "sessioninfo",
         "Version": "1.2.2",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "3f9796a8d0a0e8c6eb49a4b029359d1f",
         "Requirements": [
           "cli"
@@ -2273,7 +2305,7 @@ Content:
         "Package": "sourcetools",
         "Version": "0.1.7",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "947e4e02a79effa5d512473e10f41797",
         "Requirements": []
       },
@@ -2332,7 +2364,7 @@ Content:
         "Package": "svglite",
         "Version": "2.1.0",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "68dfdf211af6aa4e5f050f064f64d401",
         "Requirements": [
           "cpp11",
@@ -2542,7 +2574,7 @@ Content:
         "Package": "textshaping",
         "Version": "0.3.6",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "1ab6223d3670fac7143202cb6a2d43d5",
         "Requirements": [
           "cpp11",
@@ -2673,7 +2705,7 @@ Content:
         "Package": "utf8",
         "Version": "1.2.2",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "c9c462b759a5cc844ae25b5942654d13",
         "Requirements": []
       },
@@ -2701,7 +2733,7 @@ Content:
         "Package": "visR",
         "Version": "0.2.0",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "67af4aa7b086e538578327d4587e9bf8",
         "Requirements": [
           "DT",
@@ -2800,7 +2832,7 @@ Content:
         "Package": "xml2",
         "Version": "1.3.3",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "40682ed6a969ea5abfd351eb67833adc",
         "Requirements": []
       },
@@ -2808,7 +2840,7 @@ Content:
         "Package": "xopen",
         "Version": "1.0.0",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "6c85f015dee9cc7710ddd20f86881f58",
         "Requirements": [
           "processx"
@@ -2818,7 +2850,7 @@ Content:
         "Package": "xtable",
         "Version": "1.8-4",
         "Source": "Repository",
-        "Repository": "RSPM",
+        "Repository": "CRAN",
         "Hash": "b8acdf8af494d9ec19ccb2481a9b11c2",
         "Requirements": []
       },
