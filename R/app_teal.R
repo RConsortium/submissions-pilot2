@@ -1,23 +1,24 @@
 #' @importFrom teal init modules module
 #' @importFrom shiny tags
 create_teal <- function() {
-  adsl  <- haven::read_xpt(app_sys("adam", "adsl.xpt"))
+  adam_path <- get_golem_config("adam_path")
+  adsl  <- haven::read_xpt(file.path(adam_path, "adsl.xpt"))
   adsl <- adsl %>%
     dplyr::mutate(
       TRT01P = factor(TRT01P, levels = c("Placebo", "Xanomeline Low Dose",  "Xanomeline High Dose")),
       AGEGR1 = factor(AGEGR1, levels = c("<65", "65-80", ">80")),
       RACE = factor(RACE, levels = c("WHITE", "BLACK OR AFRICAN AMERICAN", "AMERICAN INDIAN OR ALASKA NATIVE"))
     )
-  adas  <- haven::read_xpt(app_sys("adam", "adadas.xpt")) %>%
+  adas  <- haven::read_xpt(file.path(adam_path, "adadas.xpt")) %>%
     dplyr::filter(
       EFFFL == "Y",
       ITTFL == 'Y',
       PARAMCD == 'ACTOT',
       ANL01FL == 'Y'
     )
-  adtte <- haven::read_xpt(app_sys("adam", "adtte.xpt")) %>%
+  adtte <- haven::read_xpt(file.path(adam_path, "adtte.xpt")) %>%
     dplyr::filter(PARAMCD == "TTDE")
-  adlb <- haven::read_xpt(app_sys("adam", "adlbc.xpt")) %>%
+  adlb <- haven::read_xpt(file.path(adam_path, "adlbc.xpt")) %>%
     subset(TRTPN %in% c(0, 81) & PARAMCD == "GLUC" & !is.na(AVISITN)) %>%
     dplyr::mutate(TRTPN = ifelse(TRTPN == 0, 99, TRTPN)) # change treatment order for pairwise comparison
   
@@ -63,7 +64,7 @@ create_teal <- function() {
       )
       
     ),
-    header = "Pilot2 app (draft)",
+    header = "Pilot2 Shiny Application",
     footer = tags$p(class="text-muted", "Source: R Consortium")
   )
   

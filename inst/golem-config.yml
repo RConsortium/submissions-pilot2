@@ -2,6 +2,7 @@ default:
   golem_name: pilot2wrappers
   golem_version: 0.0.0.9000
   app_prod: no
+  adam_path: "datasets/adam"
 production:
   app_prod: yes
 dev:
