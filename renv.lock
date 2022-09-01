@@ -4,7 +4,7 @@
     "Repositories": [
       {
         "Name": "CRAN",
-        "URL": "https://packagemanager.rstudio.com/cran/2022-02-01"
+        "URL": "https://packagemanager.rstudio.com/cran/2022-09-01"
       },
       {
         "Name": "TEAL",
@@ -1941,10 +1941,10 @@
     },
     "svglite": {
       "Package": "svglite",
-      "Version": "2.0.0",
+      "Version": "2.1.0",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "8fb6188960bf0f90996ce52f9c2106ac",
+      "Hash": "68dfdf211af6aa4e5f050f064f64d401",
       "Requirements": [
         "cpp11",
         "systemfonts"
