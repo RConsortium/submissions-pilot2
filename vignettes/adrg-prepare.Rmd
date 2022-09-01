@@ -75,6 +75,13 @@ renv_spec2 <- file_spec(
   recursive = FALSE
 )
 
+renv_spec3 <- file_spec(
+  "renv/cellar",
+  pattern = "\\.tar.gz|\\.zip",
+  format = "binary",
+  recursive = TRUE
+)
+
 golem_spec <- file_auto("dev")
 
 file_ectd2 <- file_spec(
@@ -93,6 +100,7 @@ path$home %>%
     app_spec, 
     renv_spec,
     renv_spec2,
+    renv_spec3,
     golem_spec
   ) %>%
   pack(output = "ectd/r1pkg.txt")
@@ -100,7 +108,7 @@ path$home %>%
 
 ## Application Installation (Dry run) 
 
-To unpack the application source code and supporting files from the custom `ectd/r1pkg.txt` bundle and run the Shiny applicaton, perform the following steps in your preferred R development environment, such as RStudio or a R console session:
+To unpack the application source code and supporting files from the custom `ectd/r1pkg.txt` bundle and run the Shiny application, perform the following steps in your preferred R development environment, such as RStudio or a R console session:
 
 1. Ensure that the working directory is set to the same location as the downloaded `r1pkg.txt` file, and run the following code: `pkglite::unpack(input = "r0pkg.txt", install = FALSE)`. You should see a series of messages indicating the application files being written to a subdirectory called `pilot2wrappers`.
 1. Launch a new R session in the `pilot2wrappers` subdirectory. 
