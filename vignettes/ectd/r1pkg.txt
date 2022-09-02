@@ -397,6 +397,976 @@ Content:
   pilot2wrappers::run_app() # add parameters here (if any)
 
 Package: pilot2wrappers
+File: R/app_config.R
+Format: text
+Content:
+  #' Access files in the current app
+  #' 
+  #' NOTE: If you manually change your package name in the DESCRIPTION, 
+  #' don't forget to change it here too, and in the config file. 
+  #' For a safer name change mechanism, use the `golem::set_golem_name()` function.
+  #' 
+  #' @param ... character vectors, specifying subdirectory and file(s) 
+  #' within your package. The default, none, returns the root of the app. 
+  #' 
+  #' @noRd
+  app_sys <- function(...){
+    system.file(..., package = "pilot2wrappers")
+  }
+  
+  
+  #' Read App Config
+  #' 
+  #' @param value Value to retrieve from the config file. 
+  #' @param config GOLEM_CONFIG_ACTIVE value. If unset, R_CONFIG_ACTIVE. 
+  #' If unset, "default".
+  #' @param use_parent Logical, scan the parent directory for config file.
+  #' 
+  #' @noRd
+  get_golem_config <- function(
+    value, 
+    config = Sys.getenv(
+      "GOLEM_CONFIG_ACTIVE", 
+      Sys.getenv(
+        "R_CONFIG_ACTIVE", 
+        "default"
+      )
+    ), 
+    use_parent = TRUE
+  ){
+    config::get(
+      value = value, 
+      config = config, 
+      # Modify this if your config file is somewhere else:
+      file = app_sys("golem-config.yml"), 
+      use_parent = use_parent
+    )
+  }
+  
+
+Package: pilot2wrappers
+File: R/app_teal.R
+Format: text
+Content:
+  #' @importFrom teal init modules module
+  #' @importFrom shiny tags
+  create_teal <- function() {
+    adam_path <- get_golem_config("adam_path")
+    adsl  <- haven::read_xpt(file.path(adam_path, "adsl.xpt"))
+    adsl <- adsl %>%
+      dplyr::mutate(
+        TRT01P = factor(TRT01P, levels = c("Placebo", "Xanomeline Low Dose",  "Xanomeline High Dose")),
+        AGEGR1 = factor(AGEGR1, levels = c("<65", "65-80", ">80")),
+        RACE = factor(RACE, levels = c("WHITE", "BLACK OR AFRICAN AMERICAN", "AMERICAN INDIAN OR ALASKA NATIVE"))
+      )
+    adas  <- haven::read_xpt(file.path(adam_path, "adadas.xpt")) %>%
+      dplyr::filter(
+        EFFFL == "Y",
+        ITTFL == 'Y',
+        PARAMCD == 'ACTOT',
+        ANL01FL == 'Y'
+      )
+    adtte <- haven::read_xpt(file.path(adam_path, "adtte.xpt")) %>%
+      dplyr::filter(PARAMCD == "TTDE")
+    adlb <- haven::read_xpt(file.path(adam_path, "adlbc.xpt")) %>%
+      subset(TRTPN %in% c(0, 81) & PARAMCD == "GLUC" & !is.na(AVISITN)) %>%
+      dplyr::mutate(TRTPN = ifelse(TRTPN == 0, 99, TRTPN)) # change treatment order for pairwise comparison
+    
+    app <- teal::init(
+      data = teal.data::cdisc_data(
+        teal.data::cdisc_dataset("ADSL", adsl),
+        teal.data::cdisc_dataset("ADAS", adas, keys = c("STUDYID", "USUBJID", "PARAMCD", "AVISIT", "QSSEQ")),
+        teal.data::cdisc_dataset("ADTTE", adtte),
+        teal.data::cdisc_dataset("ADLB", adlb)
+      ),
+      modules = modules(
+        module(
+          label = "App Information",
+          server = function(input, output, session, datasets){},
+          ui = function(id, ...) {
+            shiny::includeMarkdown(app_sys("app", "docs", "about.md"))
+          },
+          filters = NULL
+        ),
+        module(
+          label = "Demographic Table",
+          ui = ui_t_demographic,
+          server = srv_t_demographic,
+          filters = "ADSL"
+        ),
+        module(
+          label = "KM plot for TTDE",
+          ui = ui_g_kmplot,
+          server = srv_g_kmplot,
+          filters = c("ADSL", "ADTTE")
+        ),
+        module(
+          label = "Primary Table",
+          ui = ui_t_primary,
+          server = srv_t_primary,
+          filters = c("ADSL", "ADAS")
+        ),
+        module(
+          label = "Efficacy Table",
+          ui = ui_t_efficacy,
+          server = srv_t_efficacy,
+          filters = c("ADSL", "ADLB")
+        )
+        
+      ),
+      header = "Pilot2 Shiny Application",
+      footer = tags$p(class="text-muted", "Source: R Consortium")
+    )
+    
+    return(app)
+  }
+
+Package: pilot2wrappers
+File: R/eff_models.R
+Format: text
+Content:
+  #' ANCOVA Model data processing necessary for Table 14-3.01
+  #'
+  #' This function handles the necessary data processing to handle the CDISC pilot
+  #' primary endpoint analysis. The original source can be found
+  #' [here](https://github.com/atorus-research/CDISC_pilot_replication/blob/3c8e9e3798c02be8d93bd8e8944d1e0d3f6519e2/programs/funcs.R#L401)
+  #'
+  #' @importFrom tidyr pivot_longer
+  #' @importFrom glue glue
+  #'
+  #' @param data Source dataset (filtered by flags)
+  #' @param var Variable on which model should be run
+  #' @param wk Visit to be modeled
+  #'
+  #' @return Formatted dataframe
+  #' 
+  #' @importFrom dplyr filter mutate case_when rowwise select bind_rows arrange
+  #' @importFrom stats drop1 confint
+  #' @export
+  #'
+  efficacy_models <- function(data, var=NULL, wk=NULL) {
+    # Need to set contrasts to work for Type III SS. See analysis results metadata for
+    # table 14-3.01. Reference for R here: https://www.r-bloggers.com/anova-%E2%80%93-type-iiiiii-ss-explained/
+    op <- options(contrasts = c("contr.sum","contr.poly"))
+    
+    # Subset to analyze
+    data <- data %>%
+      filter(AVISITN == wk)
+    
+    data <- data %>%
+      mutate(
+        TRTPCD = case_when(
+          TRTPN == 0 ~ 'Pbo',
+          TRTPN == 54 ~ 'Xan_Lo',
+          TRTPN == 81 ~ 'Xan_Hi'
+        )
+      )
+    
+    # Create an ordered factor variable for the models
+    data['TRTPCD_F'] <- factor(data$TRTPCD, levels=c('Xan_Hi', 'Xan_Lo', 'Pbo'))
+    data['AWEEKC'] = factor(data$AVISIT)
+    
+    # Set up the models
+    if (var == "CHG") {
+      model1 <- lm(CHG ~ TRTPN + SITEGR1 + BASE, data=data)
+      model2 <- lm(CHG ~ TRTPCD_F + SITEGR1 + BASE, data=data)
+    } else {
+      model1 <- lm(AVAL ~ TRTPN + SITEGR1, data=data)
+      model2 <- lm(AVAL ~ TRTPCD_F + SITEGR1, data=data)
+    }
+    
+    ## Dose Response --- NOTE: For statistics portions, I purposefully did not
+    #import the libraries to make it explicitly clear which packages were being
+    #used to match P-values.
+    ancova <- drop1(model1, .~., test="F")
+    
+    # Pull it out into a table
+    sect1 <- tibble::tibble(row_label=c('p-value(Dose Response) [1][2]'),
+                    `81` = c(num_fmt(ancova[2, 'Pr(>F)'], int_len=4, digits=3, size=12))
+    ) %>%
+      pad_row()
+    
+    ## Pairwise Comparisons ----
+    # Here's a reference for the emmeans package and how to use it:
+    #   https://cran.r-project.org/web/packages/emmeans/vignettes/confidence-intervals.html
+    # Adjustments made are in line with the analysis results metadata in the analysis define
+    # and PROC GLM documentation.
+    
+    # Linear model but use treatment group as a factor now
+    # LS Means and weight proportionately to match OM option on PROC GLM in SAS
+    lsm <- emmeans::lsmeans(model2, ~TRTPCD_F, weights='proportional')
+    
+    # Here on out - it's all the same data manipulation
+    # Get pairwise contrast and remove P-values adjustment for multiple groups
+    cntrst_p <- emmeans::contrast(lsm, method="pairwise", adjust=NULL)
+    # 95% CI
+    cntrst_ci <- confint(cntrst_p)
+    
+    # merge and convert into dataframe
+    pw_data <- tibble::as_tibble(summary(cntrst_p)) %>%
+      merge(tibble::as_tibble(cntrst_ci)) %>%
+      rowwise() %>%
+      # Create the display strings
+      mutate(
+        p = num_fmt(p.value, int_len=4, digits=3, size=12),
+        diff_se = as.character(
+          glue::glue('{num_fmt(estimate, int_len=2, digits=1, size=4)} ({num_fmt(SE, int_len=1, digits=2, size=4)})')
+        ),
+        ci = as.character(
+          glue::glue('({num_fmt(lower.CL, int_len=2, digits=1, size=4)};{num_fmt(upper.CL, int_len=1, digits=1, size=3)})')
+        )
+      ) %>%
+      # Clean out the numeric variables
+      select(contrast, p, diff_se, ci) %>%
+      # Transpose
+      tidyr::pivot_longer(c('p', 'diff_se', 'ci'), names_to = 'row_label')
+    
+    # Subset Xan_Lo - Pbo into table variables
+    xan_lo <- pw_data %>%
+      filter(contrast == 'Xan_Lo - Pbo') %>%
+      # Rename to the table display variable
+      select(`54`=value) %>%
+      pad_row()
+    
+    #Add in row_label
+    xan_lo['row_label'] <- c('p-value(Xan - Placebo) [1][3]', '  Diff of LS Means (SE)', '  95% CI', '')
+    
+    # Subset Xan_hi - Pbo into table variables
+    xan_hi <- pw_data %>%
+      filter(contrast == 'Xan_Hi - Pbo') %>%
+      # Rename to the table display variable
+      select(`81`=value) %>%
+      pad_row()
+    # Add in row_label
+    xan_hi['row_label'] <- c('p-value(Xan - Placebo) [1][3]', '  Diff of LS Means (SE)', '  95% CI', '')
+    xan_hi['ord'] <- c(1,2,3,4) # Order for sorting
+    
+    # Subset Xan_Hi - Xan_Lo into table variable
+    xan_xan <- pw_data %>%
+      filter(contrast == 'Xan_Hi - Xan_Lo') %>%
+      # Rename to the table display variable
+      select(`81`=value)
+    # Add in row_label
+    xan_xan['row_label'] <- c('p-value(Xan High - Xan Low) [1][3]', '  Diff of LS Means (SE)', '  95% CI')
+    xan_xan['ord'] <- c(5,6,7) # Order for sorting
+    
+    # Pack it all together
+    pw_final <- merge(xan_lo, xan_hi, by='row_label') %>%
+      bind_rows(xan_xan) %>%
+      arrange(ord)
+    
+    # Bind and clean up
+    bind_rows(sect1, pw_final) %>% 
+      select(row_label, 
+             `var1_Xanomeline Low Dose` = `54`,
+             `var1_Xanomeline High Dose` = `81`
+      )
+  }
+
+Package: pilot2wrappers
+File: R/fmt.R
+Format: text
+Content:
+  #' Format numeric value
+  #'
+  #' @inheritParams base::formatC
+  #'
+  #' @examples
+  #' fmt_num(1.25, digits = 1)
+  #' @export
+  fmt_num <- function(x, digits, width = digits + 4) {
+    formatC(x,
+      digits = digits,
+      format = "f",
+      width = width
+    )
+  }
+  
+  #' Format point estimator
+  #'
+  #' @param .mean mean of an estimator.
+  #' @param .sd sd of an estimator.
+  #' @param digits number of digits for `.mean` and `.sd`.
+  #'
+  #' @examples
+  #' fmt_est(1.25, 0.5)
+  #' @export
+  fmt_est <- function(.mean,
+                      .sd,
+                      digits = c(1, 2)) {
+    .mean <- fmt_num(.mean, digits[1], width = digits[1] + 4)
+    .sd <- fmt_num(.sd, digits[2], width = digits[2] + 3)
+    paste0(.mean, " (", .sd, ")")
+  }
+  
+  #' Format confidence interval
+  #'
+  #' @param .est an estimator.
+  #' @param .lower lower confidence interval bound of an estimator.
+  #' @param .upper upper confidence interval bound of an estimator.
+  #' @param digits number of digits for `.est`, `.lower`, and `.upper`.
+  #' @param width the total field width.
+  #'
+  #' @examples
+  #' fmt_ci(1, -0.25, 1.32)
+  #' @export
+  fmt_ci <- function(.est,
+                     .lower,
+                     .upper,
+                     digits = 2,
+                     width = digits + 3) {
+    .est <- fmt_num(.est, digits, width)
+    .lower <- fmt_num(.lower, digits, width)
+    .upper <- fmt_num(.upper, digits, width)
+    paste0(.est, " (", .lower, ",", .upper, ")")
+  }
+  
+  #' Format p-Value
+  #'
+  #' @param .p a p-value.
+  #' @param digits number of digits for `.est`, `.lower`, and `.upper`.
+  #'
+  #' @examples
+  #' fmt_pval(0.2)
+  #' @export
+  fmt_pval <- function(.p, digits = 3) {
+    scale <- 10^(-1 * digits)
+    p_scale <- paste0("<", digits)
+    ifelse(.p < scale, p_scale, fmt_num(.p, digits = digits))
+  }
+
+Package: pilot2wrappers
+File: R/globals.R
+Format: text
+Content:
+  utils::globalVariables(
+    c(
+      "TRT01P", "AGEGR1", "RACE", "EFFFL", "ITTFL", "PARAMCD", "ANL01FL", "TRTPN", 
+      "AVISITN", "p.value", "contrast", "p", "diff_se",
+      "ci", "value", "ord", "row_label", "54", "81", "row_label1", "ord_layer_index", "row_label2", "ord_layer_1", 
+      "ord_layer_2", "TRTP", "USUBJID",
+      "sd", "median", "AVAL", "CHG", ".", "TRTP", "BASE",
+      "SE", "df", "N", "mean_bl",
+      "sd_bl", "sd", "mean_chg", "sd_chg", 
+      "emmean", "lower.CL", "upper.CL", "Trt",
+      "CI", "estimate", "lower", "upper", "p.value",
+      "comp", "SAFFL", "STUDYID", "USUBJID", "TRT01A",
+      "AVAL", "CNSR", "PARAM", "PARAMCD", "anl"
+    )
+  )
+
+Package: pilot2wrappers
+File: R/helpers.R
+Format: text
+Content:
+  #' Add a padding row below data
+  #'
+  #' @param .data Data to pad
+  #' @param n Number of rows to pad
+  #' 
+  #' @importFrom stringr str_pad
+  #'
+  #' @return Dataframe with extra blank rows
+  #' @export
+  pad_row <- function(.data, n=1) {
+    .data[(nrow(.data)+1):(nrow(.data)+n), ] <- ""
+    .data
+  }
+  
+  #' Number formatter
+  #'
+  #' Format numbers for presentation, with proper rounding of data
+  #' 
+  #' @param var Variable to format
+  #' @param digits Desired number of decimal places
+  #' @param size String size
+  #' @param int_len Space allotted for integer side of the decimal
+  #'
+  #' @return Formatted string
+  #' @export 
+  num_fmt <- Vectorize(function(var, digits=0, size=10, int_len=3) {
+    # Formats summary stat strings to align display correctly
+    
+    if (is.na(var)) return('')
+    
+    # Set nsmall to input digits
+    nsmall = digits
+    
+    # Incremement digits for to compensate for display
+    if (digits > 0) {
+      digits = digits + 1
+    }
+    
+    # Form the string
+    return(str_pad(
+      format(
+        # Round
+        round(var, nsmall),
+        # Set width of format string
+        width=(int_len+digits),
+        # Decimals to display
+        nsmall=nsmall
+      ),
+      # Overall width padding
+      side='right', size
+    ))
+  })
+  
+  #' style a tooltip produced by the tippy package
+  #' 
+  #' @param text String for text in tooltip
+  #' @param font_size Font size (in pixels)
+  #'
+  #' @return HTML with font size applied
+  #' @export
+  tooltip_text <- function(text, font_size = 16) {
+    glue::glue("<span style='font-size:{font_size}px;'>{text}<span>")
+  }
+  
+  #' update data file configuration setting
+  #' 
+  #' @param path path to directory containing data files
+  #'   used within the Shiny application
+  #' @return Used for side effects
+  #' @export
+  set_data_path <- function(path) {
+    # assertions on path
+    path <- normalizePath(path, mustWork = FALSE)
+    
+    if (!dir.exists(path)) stop(paste("The path", path, "does not exist. Please use a valid directory path"), call. = FALSE)
+    
+    # check if data files are present
+    data_files <- c("adsl.xpt", "adadas.xpt", "adtte.xpt",  "adlbc.xpt")
+    data_check <-sapply(data_files, function(x) file.exists(file.path(path, x)))
+    
+    if (!all(data_check)) {
+      # determine which files are missing
+      missing_files <- data_files[!data_check]
+      stop(paste("The following data files are missing in the specified path", path, ":", paste(missing_files, collapse = ", ")), call. = FALSE)
+    }
+    
+    # set golem config option
+    golem::amend_golem_config("adam_path", path, talkative = FALSE)
+    invisible(TRUE)
+  }
+
+Package: pilot2wrappers
+File: R/package.R
+Format: text
+Content:
+  #' @keywords internal
+  "_PACKAGE"
+  
+  # The following block is used by usethis to automatically manage
+  # roxygen namespace tags. Modify with care!
+  ## usethis namespace: start
+  ## usethis namespace: end
+  NULL
+
+Package: pilot2wrappers
+File: R/run_app.R
+Format: text
+Content:
+  #' Run the Shiny Application
+  #'
+  #' @param ... arguments to pass to golem_opts. 
+  #' See `?golem::get_golem_options` for more details.
+  #' @inheritParams shiny::shinyApp
+  #'
+  #' @export
+  #' @importFrom shiny shinyApp
+  #' @importFrom golem with_golem_options 
+  run_app <- function(
+    onStart = NULL,
+    options = list(), 
+    enableBookmarking = NULL,
+    uiPattern = "/",
+    ...
+  ) {
+    app <- create_teal()
+    with_golem_options(
+      app = shinyApp(
+        ui = app$ui,
+        server = app$server,
+        onStart = onStart,
+        options = options, 
+        enableBookmarking = enableBookmarking, 
+        uiPattern = uiPattern
+      ), 
+      golem_opts = list(...)
+    )
+  }
+
+Package: pilot2wrappers
+File: R/tm_g_kmplot.R
+Format: text
+Content:
+  #' ui_g_kmplot UI Function
+  #'
+  #' @description A shiny Module.
+  #'
+  #' @param id,input,output,session Internal parameters for {shiny}.
+  #'
+  #' @noRd 
+  #'
+  #' @importFrom shiny NS tagList plotOutput
+  ui_g_kmplot <- function(id, datasets) {
+    ns <- NS(id)
+    plotOutput(ns("plot"))
+  }
+  
+  #' srv_g_kmplot Server Functions
+  #'
+  #' @noRd
+  #' @importFrom shiny renderPlot
+  #' @import ggplot2
+  srv_g_kmplot <- function(input, output, session, datasets) {
+    output$plot <- renderPlot({
+      adsl <- datasets$get_data("ADSL", filtered = TRUE)
+      adtte <- datasets$get_data("ADTTE", filtered = TRUE)
+      anl <<- adsl %>% 
+        dplyr::filter(
+          SAFFL == "Y",
+          STUDYID == "CDISCPILOT01"
+        ) %>%
+        dplyr::select(STUDYID, USUBJID, TRT01A) %>%
+        dplyr::inner_join(
+          filter(
+            adtte, STUDYID == "CDISCPILOT01"
+          ) %>% select(STUDYID, USUBJID, AVAL, CNSR, PARAM, PARAMCD),
+          by = c("STUDYID", "USUBJID")
+        ) %>%
+        dplyr::mutate(
+          TRT01A = factor(TRT01A, levels = c("Placebo", "Xanomeline Low Dose",  "Xanomeline High Dose")),
+          AVAL = AVAL/30.4167
+        )
+      
+       
+      ## -----------------------------------------------------------------------------------------------------------------------------------
+      # estimate survival
+      surv_mod <- visR::estimate_KM(data = anl, strata = "TRT01A")
+       
+      # 
+      # # save plot
+      ggplot2::theme_set(theme_bw())
+  
+      KM <- visR::visr(surv_mod,
+                       y_label = "Survival Probability (%)",
+                       x_label = "Time (Months)", 
+                       fun = "pct",
+                       legend_position = "bottom" ) %>%
+        visR::add_CNSR() %>%
+        visR::add_CI() 
+  
+      KM <- KM +
+        ggplot2::geom_hline(yintercept=0.5, linetype = "dashed")
+  
+      KM <- KM %>%
+        visR::add_risktable(group = "statlist")
+  
+      title <- cowplot::ggdraw() +
+        cowplot::draw_label(
+          "KM plot for Time to First Dermatologic Event: Safety population\n",
+          fontfamily = "sans",
+          fontface = "bold",
+          size=10
+        )
+  
+      caption <- cowplot::ggdraw() +
+        cowplot::draw_label(
+          paste(
+            "The shaded areas are 95% CI of the survival probability for each group",
+            "\n",
+            paste0(Sys.time())
+          ),
+          fontfamily = "sans",
+          size=10
+        )
+  
+      KM <- cowplot::plot_grid(
+        title, KM, caption,
+        ncol = 1,
+        rel_heights = c(0.1,0.8,0.1)
+      )
+      KM
+    })
+  }
+
+Package: pilot2wrappers
+File: R/tm_t_demographic.R
+Format: text
+Content:
+  #' ui_t_demographic UI Function
+  #'
+  #' @description A shiny Module.
+  #'
+  #' @param id,input,output,session Internal parameters for {shiny}.
+  #'
+  #' @noRd 
+  #'
+  #' @importFrom shiny NS tagList uiOutput
+  #' @importFrom stats median sd
+   ui_t_demographic <- function(id, datasets) {
+     ns <- NS(id)
+     uiOutput(ns("table"))
+   }
+   
+   #' srv_t_demographic Server Functions
+   #'
+   #' @noRd
+   #' @importFrom shiny renderUI
+   #' @import rtables
+   srv_t_demographic <- function(input, output, session, datasets) {
+     output$table <- renderUI({
+       ADSL_FILTERED <- datasets$get_data("ADSL", filtered = TRUE)
+       vars <- c("AGE", "AGEGR1", "RACE", "HEIGHTBL", "WEIGHTBL", "BMIBL")
+       labels <- datasets$get_varlabels("ADSL", vars)
+       labels <- vapply(vars, function(x) ifelse(is.na(labels[[x]]), 
+                                                 x, labels[[x]]), character(1))
+       labels["AGEGR1"] <- "Age group"
+       labels["AGE"] <- "Age (year)"
+       labels["RACE"] <- "Race"
+       lyt <- basic_table(title = "Protocol: CDISCPILOT01",
+                          subtitles = "Population: Intent-to-Treat",
+                          main_footer = paste0(Sys.time())
+       ) %>%
+         split_cols_by("TRT01P") %>%
+         add_colcounts() %>%
+         analyze(vars, function(x, ...) {
+           if (is.numeric(x)) {
+             in_rows(
+               "Mean (SD)" = c(mean(x), sd(x)),
+               "Median" = median(x),
+               "Min - Max" = range(x),
+               .formats = c("xx.x (xx.x)", "xx.xx", "xx.xx - xx.xx")
+             )
+           } else if (is.factor(x) || is.character(x)) {
+             in_rows(.list = list_wrap_x(table)(x))
+           } else {
+             stop("type not supproted")
+           }
+         },
+         var_labels = labels)
+       tbl <- build_table(lyt, ADSL_FILTERED)
+       as_html(tbl)
+       
+     })
+     
+   }
+
+Package: pilot2wrappers
+File: R/tm_t_efficacy.R
+Format: text
+Content:
+  #' ui_t_efficacy UI Function
+  #'
+  #' @description A shiny Module.
+  #'
+  #' @param id,input,output,session Internal parameters for {shiny}.
+  #'
+  #' @noRd 
+  #'
+  #' @importFrom shiny NS tagList fluidRow h4 h6 column fluidPage
+  #' @importFrom graphics pairs 
+  #' @importFrom stats lm sd
+  #' @import tippy
+  ui_t_efficacy <- function(id, datasets) {
+    ns <- NS(id) 
+    fluidPage(
+      tags$br(),
+      tags$br(),
+      fluidRow(
+        tippy::tippy(
+          h4("Primary Endpoint Analysis: Glucose (mmol/L) - Summary at Week 20 LOCF"),
+          tooltip = tooltip_text("Table is based on participants who have observable data at Baseline and Week 20", 16),
+          #tooltip = "<span style='font-size:18px;'>Table is based on participants who have observable data at Baseline and Week 20<span>",
+          allowHTML = TRUE
+        ),
+        tags$br(),tags$br(),
+        column(
+          width=10,
+          reactable::reactableOutput(ns("tbl_efficacy_1"))
+        ) 
+      ),
+      
+      tags$br(),
+      tags$br(),
+      tags$hr(),
+      fluidRow(
+        tippy::tippy(
+          h4("Pairwise Comparison"),
+          tooltip = tooltip_text("Inference in this table is based on a Analysis of Covariance (ANCOVA) model with treatment and baseline value as covariates.", 16),
+          allowHTML = TRUE
+        ),
+        tags$br(),
+        tags$br(),
+        column(
+          width=10,
+          reactable::reactableOutput(ns("tbl_efficacy_2"))
+        )
+      ),
+      tags$br(),
+      tags$br(),
+      tags$hr(),
+      fluidRow(
+        h6(tags$i("*Abbreviation: CI=Confidence Interval; LS=Least Squarses; SD=Standard Deviation"))
+      )
+    )
+  }
+  
+  #' srv_t_efficacy Server Functions
+  #'
+  #' @noRd
+  #' @importFrom shiny reactive 
+  #' @importFrom reactable reactable renderReactable colGroup colDef
+  #' @importFrom dplyr filter group_by summarise mutate select n
+  srv_t_efficacy <- function(input, output, session, datasets) {
+    efficacy_results <- reactive({
+      adlb <- datasets$get_data("ADLB", filtered = TRUE)
+      gluc_lmfit <- adlb %>%
+        filter(AVISITN == 20) %>%
+        lm(CHG ~ BASE + TRTPN, data = .)
+      
+      ## Raw summary statistics
+      t11 <- adlb %>%
+        filter(AVISITN == 20) %>%
+        group_by(TRTPN, TRTP) %>%
+        summarise(
+          N = n(),
+          mean_bl = mean(BASE),
+          sd_bl = sd(BASE),
+          mean_chg = mean(CHG),
+          sd_chg = sd(CHG),
+          mean = mean(AVAL),
+          sd = sd(AVAL)
+        )
+      
+      ## Calculate LS mean
+      t12 <- emmeans::emmeans(gluc_lmfit, "TRTPN")
+      
+      ## Merge and format data for reporting
+      apr0ancova1 <- merge(t11, t12) %>%
+        mutate(emmean_sd = SE * sqrt(df)) %>%
+        mutate(
+          Trt = c("Study Drug", "Placebo"),
+          N1 = N,
+          Mean1 = fmt_est(mean_bl, sd_bl),
+          N2 = N,
+          Mean2 = fmt_est(mean, sd),
+          N3 = N,
+          Mean3 = fmt_est(mean_chg, sd_chg),
+          CI = fmt_ci(emmean, lower.CL, upper.CL)
+        ) %>%
+        select(Trt:CI)
+      
+      
+      ## -----------------------------------------------------------------------------------------------------------------------------------
+      t2 <- data.frame(pairs(t12))
+      
+      ## Treatment Comparison
+      apr0ancova2 <- t2 %>%
+        mutate(
+          lower = estimate - 1.96 * SE,
+          upper = estimate + 1.96 * SE
+        ) %>%
+        mutate(
+          comp = "Study Drug vs. Placebo",
+          mean = fmt_ci(estimate, lower, upper),
+          p = fmt_pval(p.value)
+        ) %>%
+        select(comp:p)
+      
+      ## -----------------------------------------------------------------------------------------------------------------------------------
+      ### Calculate root mean square and save data in output folder
+      apr0ancova3 <- data.frame(rmse = paste0(
+        "Root Mean Squared Error of Change = ",
+        formatC(sd(gluc_lmfit$residuals), digits = 2, format = "f", flag = "0")
+      ))
+      list(
+        apr0ancova1 = apr0ancova1,
+        apr0ancova2 = apr0ancova2,
+        apr0ancova3 = apr0ancova3
+      )
+    })
+    output$tbl_efficacy_1 <- reactable::renderReactable({
+      efficacy_results <- efficacy_results()
+      apr0ancova1 <- efficacy_results$apr0ancova1
+      coln =c("Treatment",
+              "N","Mean (SD)",
+              "N","Mean (SD)",
+              "N","Mean (SD)","LS Mean (95% CI)")
+      colgr=c(1,2,2,3,3,4,4,4)
+      colgrn=c("","Baseline","Week 20","Change from Baseline")
+      collist = lapply(1:ncol(apr0ancova1),function(xx) colDef(name=coln[xx]))
+      names(collist) = names(apr0ancova1)
+   
+      reactable(
+        apr0ancova1,
+        columns = collist,
+        columnGroups = list(
+          colGroup(name = colgrn[2], columns = names(apr0ancova1)[colgr==2]),
+          colGroup(name = colgrn[3], columns = names(apr0ancova1)[colgr==3]),
+          colGroup(name = colgrn[4], columns = names(apr0ancova1)[colgr==4])
+        )
+      )
+    })
+    output$tbl_efficacy_2 <- reactable::renderReactable({
+      efficacy_results <- efficacy_results()
+      apr0ancova2 <- efficacy_results$apr0ancova2
+      apr0ancova3 <- efficacy_results$apr0ancova3
+      coln =c("",
+              "Difference in LS Mean (95% CI)",
+              "p-Value")
+      collist = lapply(1:ncol(apr0ancova2),function(xx){
+        if(xx>1){colDef(name=coln[xx])
+        }else{colDef(name=coln[xx],footer=apr0ancova3$rmse)}
+      })
+      names(collist) = names(apr0ancova2)
+      
+      reactable(
+        apr0ancova2,
+        columns = collist,
+        defaultColDef = colDef(footerStyle = list(fontStyle = "itatlic"))
+      )
+    })
+  }
+
+Package: pilot2wrappers
+File: R/tm_t_primary.R
+Format: text
+Content:
+  #' ui_t_primary UI Function
+  #'
+  #' @description A shiny Module.
+  #'
+  #' @param id,input,output,session Internal parameters for {shiny}.
+  #'
+  #' @noRd 
+  #'
+  #' @importFrom shiny NS tagList uiOutput
+  ui_t_primary <- function(id, datasets) {
+    ns <- NS(id)
+    uiOutput(ns("table"))
+  }
+  
+  #' srv_t_primary Server Functions
+  #'
+  #' @noRd
+  #' @importFrom shiny renderUI
+  #' @import Tplyr
+  srv_t_primary <- function(input, output, session, datasets) {
+    output$table <- renderUI({
+      ADSL_FILTERED <- datasets$get_data("ADSL", filtered = TRUE)
+      ADAS_FILTERED <- datasets$get_data("ADAS", filtered = TRUE)
+      adas <- ADAS_FILTERED
+  
+      ## -----------------------------------------------------------------------------------------------------------------------------------
+      t <- tplyr_table(adas, TRTP) %>%
+        set_pop_data(ADSL_FILTERED) %>%
+        set_pop_treat_var(TRT01P) %>%
+        set_pop_where(EFFFL == "Y" & ITTFL == "Y") %>%
+        set_distinct_by(USUBJID) %>%
+        set_desc_layer_formats(
+          'n' = f_str('xx', n),
+          'Mean (SD)' = f_str('xx.x (xx.xx)', mean, sd),
+          'Median (Min; Max)' = f_str('xx.x (xxx;xx)', median, min, max)
+        ) %>%
+        add_layer(
+          group_desc(AVAL, where= AVISITN ==  0, by = "Baseline")
+        ) %>%
+        add_layer(
+          group_desc(AVAL, where= AVISITN == 24, by = "Week 24")
+        ) %>%
+        add_layer(
+          group_desc(CHG,  where= AVISITN == 24, by = "Change from Baseline")
+        )
+  
+      sum_data <- t %>%
+        build() %>%
+        nest_rowlabels() %>%
+        dplyr::select(-starts_with('ord')) %>%
+        add_column_headers(
+          paste0("|Placebo</br>(N=**Placebo**)| Xanomeline Low Dose</br>(N=**Xanomeline Low Dose**) ",
+                 "| Xanomeline High Dose</br>(N=**Xanomeline High Dose**)"),
+          header_n(t)
+        )
+  
+  
+      ## -----------------------------------------------------------------------------------------------------------------------------------
+      model_portion <- efficacy_models(adas, 'CHG', 24)
+  
+  
+      ## -----------------------------------------------------------------------------------------------------------------------------------
+      final <- dplyr::bind_rows(sum_data, model_portion)
+  
+      ht <- huxtable::as_hux(final, add_colnames = FALSE) %>%
+        huxtable::set_bold(1, 1:ncol(final), TRUE) %>%
+        huxtable::set_align(1, 1:ncol(final), 'center') %>%
+        huxtable::set_valign(1, 1:ncol(final), 'bottom') %>%
+        huxtable::set_bottom_border(1, 1:ncol(final), 1) %>%
+        huxtable::set_width(1) %>%
+        huxtable::set_escape_contents(FALSE) %>%
+        huxtable::set_col_width(c(.5, 1/6, 1/6, 1/6))
+      htmltools::HTML(huxtable::to_html(ht))
+    })
+  
+  }
+
+Package: pilot2wrappers
+File: R/Tplyr_helpers.R
+Format: text
+Content:
+  #' Nest Row Labels in a Tplyr table
+  #' 
+  #' This is a (high ungeneralized) helper function. Current function assumes that 
+  #' row_label1 groups row_label2, and turns row_label1 into a stub over its 
+  #' related groups of row_label2.
+  #'
+  #' @param .dat Input data set - should come from a built Tplyr table. 
+  #'
+  #' @importFrom dplyr distinct rename bind_rows mutate select arrange across starts_with
+  #' @importFrom tidyr replace_na
+  #' 
+  #' @return data.frame with row labels nested
+  #' @export 
+  nest_rowlabels <- function(.dat) {
+    stubs <- .dat %>% 
+      distinct(row_label1, ord_layer_index) %>% 
+      rename(row_label = row_label1) %>% 
+      mutate(
+        ord_layer_1 = 0, 
+        ord_layer_2 = 0
+      )
+    
+    .dat %>% 
+      select(-row_label1, row_label=row_label2) %>% 
+      bind_rows(stubs) %>% 
+      arrange(ord_layer_index, ord_layer_1, ord_layer_2) %>% 
+      mutate(
+        across(starts_with('var'), ~ tidyr::replace_na(., ''))
+      )
+  }
+
+Package: pilot2wrappers
+File: R/utils-pipe.R
+Format: text
+Content:
+  #' Pipe operator
+  #'
+  #' See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
+  #'
+  #' @name %>%
+  #' @rdname pipe
+  #' @keywords internal
+  #' @export
+  #' @importFrom magrittr %>%
+  #' @usage lhs \%>\% rhs
+  #' @param lhs A value or the magrittr placeholder.
+  #' @param rhs A function call using the magrittr semantics.
+  #' @return The result of calling `rhs(lhs)`.
+  NULL
+
+Package: pilot2wrappers
 File: renv.lock
 Format: text
 Content:
