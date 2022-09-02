@@ -86,7 +86,7 @@ golem_spec <- file_auto("dev")
 
 file_ectd2 <- file_spec(
   ".",
-  pattern = "^DESCRIPTION$|^NAMESPACE$|^README$|^README\\.md$|^NEWS$|^NEWS\\.md$|^LICENSE$|\\.Rbuildignore$|\\.Rprofile$",
+  pattern = "^DESCRIPTION$|^NAMESPACE$|^README$|^README\\.md$|^NEWS$|^NEWS\\.md$|^LICENSE$|\\.Rbuildignore$|\\.Rprofile$|\\.Renviron$",
   format = "text",
   recursive = FALSE,
   ignore_case = FALSE,
