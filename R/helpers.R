@@ -61,3 +61,30 @@ num_fmt <- Vectorize(function(var, digits=0, size=10, int_len=3) {
 tooltip_text <- function(text, font_size = 16) {
   glue::glue("<span style='font-size:{font_size}px;'>{text}<span>")
 }
+
+#' update data file configuration setting
+#' 
+#' @param path path to directory containing data files
+#'   used within the Shiny application
+#' @return Used for side effects
+#' @export
+set_data_path <- function(path) {
+  # assertions on path
+  path <- normalizePath(path, mustWork = FALSE)
+  
+  if (!dir.exists(path)) stop(paste("The path", path, "does not exist. Please use a valid directory path"), call. = FALSE)
+  
+  # check if data files are present
+  data_files <- c("adsl.xpt", "adadas.xpt", "adtte.xpt",  "adlbc.xpt")
+  data_check <-sapply(data_files, function(x) file.exists(file.path(path, x)))
+  
+  if (!all(data_check)) {
+    # determine which files are missing
+    missing_files <- data_files[!data_check]
+    stop(paste("The following data files are missing in the specified path", path, ":", paste(missing_files, collapse = ", ")), call. = FALSE)
+  }
+  
+  # set golem config option
+  golem::amend_golem_config("adam_path", path, talkative = FALSE)
+  invisible(TRUE)
+}
