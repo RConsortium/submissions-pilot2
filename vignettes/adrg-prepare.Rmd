@@ -61,6 +61,13 @@ app_spec <- file_spec(
   recursive = FALSE
 )
 
+app_source_spec <- file_spec(
+  "R",
+  pattern = "\\.R",
+  format = "text",
+  recursive = FALSE
+)
+
 renv_spec <- file_spec(
   ".",
   pattern = "\\.lock",
@@ -98,6 +105,7 @@ path$home %>%
     file_ectd2,
     file_auto("inst"), 
     app_spec, 
+    app_source_spec,
     renv_spec,
     renv_spec2,
     renv_spec3,
