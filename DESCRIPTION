@@ -12,7 +12,7 @@ Authors@R: c(
         person("copyright", role = c("cph"))
        )
 Description: Insert Package Description. 
-Depends: R (>= 3.6.0)
+Depends: R (>= 4.1.0)
 License: GPL (>= 3)
 Imports: 
     config (>= 0.3.1),
