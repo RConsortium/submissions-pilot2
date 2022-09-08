@@ -2,9 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
-pilot1wrappers.Rcheck/
-pilot1wrappers*.tar.gz
-pilot1wrappers*.tgz
+pilot2wrappers.Rcheck/
+pilot2wrappers*.tar.gz
+pilot2wrappers*.tgz
 inst/doc
-tmp/*
-.DS_Sotre
+.DS_Store
+rsconnect/
