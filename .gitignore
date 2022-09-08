@@ -7,3 +7,4 @@ pilot1wrappers*.tar.gz
 pilot1wrappers*.tgz
 inst/doc
 tmp/*
+rsconnect/
