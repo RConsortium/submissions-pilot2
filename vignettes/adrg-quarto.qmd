@@ -1,0 +1,837 @@
+---
+title: "Analysis Data Reviewer's Guide"
+author: "R Consortium"
+subtitle: "R Consortium R Submission Pilot 2"
+date: "2022-09-23"
+format: 
+  pdf:
+    number-sections: true
+    execute:
+      echo: false
+      warning: false
+      message: false
+    monofont: "DejaVu Sans Mono"
+  html:
+    toc: true
+    toc-location: body
+    execute:
+      echo: false
+      warning: false
+      message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(dplyr)
+library(kableExtra)
+library(magrittr)
+```
+
+# Introduction
+
+## Purpose
+
+The Analysis Data Reviewer's Guide (ADRG) provides specific instructions for executing a Shiny application created with the R-language for viewing analysis results and performing custom subpopulation analysis based on the data sets and analytical methods used in the R Consortium R Submission Pilot 1. This document provides context for the analysis datasets and terminology that benefit from additional explanation beyond the Data Definition document (define.xml), as well as a summary of ADaM conformance findings. Appendices 1 and 2 provide detailed procedures for installing and configuring a local R environment to access the previous Pilot 1 content and to install the Shiny application for use within a local R session.
+
+## Study Data Standards and Dictionary Inventory
+
++------------------------+---------------------------+
+| Standard or Dictionary | Versions Used             |
++========================+===========================+
+| SDTM                   | SDTM v1.4/ SDTM IG v3.1.2 |
++------------------------+---------------------------+
+| ADaM                   | ADaM v2.1/ ADaM IG v1.0   |
++------------------------+---------------------------+
+| Controlled Terminology | SDTM CT 2011-12-09        |
+|                        |                           |
+|                        | ADaM CT 2011-07-22        |
++------------------------+---------------------------+
+| Data Definitions       | define.xml v2.0           |
++------------------------+---------------------------+
+| Medications Dictionary | MedDRA v8.0               |
++------------------------+---------------------------+
+
+## Source Data Used for Analysis Dataset Creation
+
+The ADaMs we used to regenerate the outputs were the PHUSE CDISC Pilot replication ADaMs following ADaM IG v1.0. The ADaM dataset and its corresponding SDTM data set are publicly available at the PHUSE Github Repository (<https://github.com/phuse-org/phuse-scripts/blob/master/data/adam/TDF_ADaM_v1.0.zip>, <https://github.com/phuse-org/phuse-scripts/blob/master/data/sdtm/TDF_SDTM_v1.0%20.zip>)
+
+# Protocol Description
+
+## Protocol Number and Title
+
+Protocol Number: CDISCPilot1
+
+Protocol Title: Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in Patients with Mild to Moderate Alzheimer's Disease
+
+The reference documents can be found at <https://bitbucket.cdisc.org/projects/CED/repos/sdtm-adam-pilot-project/browse/updated-pilot-submission-package/900172/>
+
+## Protocol Design in Relation to ADaM Concepts
+
+Objectives:
+
+The objectives of the study were to evaluate the efficacy and safety of transdermal xanomeline, 50cm and 75cm, and placebo in subjects with mild to moderate Alzheimer's disease.
+
+Methodology:
+
+This was a prospective, randomized, multi-center, double-blind, placebo-controlled, parallel-group study. Subjects were randomized equally to placebo, xanomeline low dose, or xanomeline high dose. Subjects applied 2 patches daily and were followed for a total of 26 weeks.
+
+Number of Subjects Planned:
+
+300 subjects total (100 subjects in each of 3 groups)
+
+Study schema:
+
+![](figures/study_design.png)
+
+# Analysis Considerations Related to Multiple Analysis Datasets
+
+## Core Variables
+
+Core variables are those that are represented across all/most analysis datasets.
+
+| Variable Name | Variable Description                |
+|---------------|-------------------------------------|
+| USUBJID       | Unique subject identifier           |
+| STUDYID       | Study Identifier                    |
+| SITEID        | Study Site Identifier               |
+| TRTSDT        | Date of First Exposure to Treatment |
+| TRTEDT        | Date of Last Exposure to Treatment  |
+| AGE           | Age                                 |
+| AGEGR1        | Pooled Age Group 1                  |
+| AGEGR1N       | Pooled Age Group 1 (N)              |
+| SEX           | Sex                                 |
+| RACE          | Race                                |
+| RACEN         | Race (N)                            |
+
+## Treatment Variables
+
+-   Are the values of `ARM` equivalent in meaning to values of `TRTxxP`? Yes
+
+-   Are the values of `TRTxxA` equivalent in meaning to values of `TRTxxP`? Yes
+
+-   Are both planned and actual treatment variables used in analyses? Yes
+
+## Use of Visit Windowing, Unscheduled Visits, and Record Selection
+
+-   Was windowing used in one or more analysis datasets? Yes
+
+-   Were unscheduled visits used in any analyses? Yes
+
+## Imputation/Derivation Methods
+
+Not applicable
+
+# Analysis Data Creation and Processing Issues
+
+## Data Dependencies
+
+![](figures/data_dependencies.png)
+
+# Analysis Dataset Description
+
+## Overview
+
+The analysis codes and outputs submitted in Pilot 1 and the Shiny application modules in Pilot 2 cover part of the efficacy and safety objectives of the initial protocol. More specifically, 4 analysis outputs are included, covering demographics analysis, primary efficacy endpoint analysis, and safety analysis.
+
+## Analysis Datasets
+
+The following table provides detailed information for each analysis dataset included in the Pilot 1 submission. The Shiny application for this pilot utilizes the following analysis datasets: `ADSL`, `ADTTE`, `ADADAS`, `ADLBC`.
+
+```{r}
+#| label: table-datasets-prep
+#| echo: false
+
+df <- tibble::tibble(
+  dataset = c("ADSL", "ADAE", "ADTTE", "ADLBC", "ADLBCPV", "ADLBH", "ADLBHPV", "ADLBHY", "ADADAS", "ADCIBC", "ADNPIX", "ADVS"),
+  label = c("Subject Level Analysis Dataset", "Adverve Events Analysis Dataset", "Time to Event Analysis Dataset", "Analysis Dataset Lab Blood Chemistry", "Analysis Dataset Lab Blood Chemistry (Previous Visit)", "Analysis Dataset Lab Hematology", "Analysis Dataset Lab Hematology (Previous Visit)", "Analysis Dataset Lab Hy's Law", "ADAS-Cog Analysis", "CIBIC+ Analysis", "NPI-X Item Analysis Data", "Vital Signs Analysis Dataset"),
+  class = c("ADSL", "ADAM OTHER", rep("BASIC DATA SCTRUCTURE", 10)),
+  efficacy = c(rep("", 8), rep("x", 3),  ""),
+  safety = c("", rep("x", 7), rep("", 3), "x"),
+  baseline_ind = c("x", rep("", 11)),
+  primary_ind = c(rep("", 8), "x",  rep("", 3)),
+  structure = c("One observation per subject", "One record per subject per adverse event", "One observation per subject per analysis parameter", rep("One record per subject per parameter per analysis visit", 5), rep("One record per subject per parameter per analysis visit per analysis date", 2), rep("One record per subject per parameter per analysis visit", 2))
+)
+
+df_kbl <- kbl(
+  df, 
+  col.names = c("Dataset", "Label", "Class", "Efficacy", "Safety", "Baseline or other subject characteristics", "Primary Objective", "Structure"),
+  align = "c",
+  booktabs = FALSE
+)
+```
+
+::: {.content-visible when-format="html"}
+```{r}
+#| label: table-datasets-html
+#| echo: false
+
+kable_styling(df_kbl, font_size = 10)
+```
+:::
+
+::: {.content-visible when-format="pdf"}
+```{r}
+#| label: table-datasets-pdf
+#| echo: false
+kable_styling(df_kbl, latex_options = c("scale_down")) %>%
+  column_spec(1, border_left = TRUE, border_right = TRUE, latex_valign = "m") %>%
+  column_spec(2, width = "10em", border_left = TRUE, border_right = TRUE, latex_valign = "m") %>%
+  column_spec(3, width = "10em", border_left = TRUE, border_right = TRUE, latex_valign = "m") %>%
+  column_spec(4, border_left = TRUE, border_right = TRUE, latex_valign = "m") %>%
+  column_spec(5, border_left = TRUE, border_right = TRUE, latex_valign = "m") %>%
+  column_spec(6, width = "10em", border_left = TRUE, border_right = TRUE, latex_valign = "m") %>%
+  column_spec(7, width = "10em", border_left = TRUE, border_right = TRUE, latex_valign = "m") %>%
+  column_spec(8, width = "15em", border_left = TRUE, border_right = TRUE, latex_valign = "m")
+```
+:::
+
+### ADSL - Subject Level Analysis Dataset
+
+The subject level analysis dataset (ADSL) contains required variables for demographics, treatment groups, and population flags. In addition, it contains other baseline characteristics that were used in both safety and efficacy analyses. All patients in DM were included in ADSL.
+
+The following are the key population flags are used in analyses for patients:
+
+• SAFFL -- Safety Population Flag (all patients having received any study treatment)
+
+• ITTFL -- Intent-to-Treat Population Flag (all randomized patients)
+
+### ADAE - Adverse Events Analysis Data
+
+ADAE contains one record per reported event per subject. Subjects who did not report any Adverse Events are not represented in this dataset. The data reference for ADAE is the SDTM
+
+AE (Adverse Events) domain and there is a 1-1 correspondence between records in the source and this analysis dataset. These records can be linked uniquely by STUDYID, USUBJID, and AESEQ.
+
+Events of particular interest (dermatologic) are captured in the customized query variable (CQ01NAM) in this dataset. Since ADAE is a source for ADTTE, the first chronological occurrence based on the start dates (and sequence numbers) of the treatment emergent dermatological events are flagged (AOCC01FL) to facilitate traceability between these two analysis datasets.
+
+### ADTTE - Time to Event Analysis Dataset
+
+ADTTE contains one observation per parameter per subject. ADTTE is specifically for safety analyses of the time to the first dermatologic adverse event. Dermatologic AEs are considered an adverse event of special interest. The key parameter used for the analysis of time to the first dermatological event is with PARAMCD of "TTDE".
+
+### ADLBHPV - Laboratory Results Hematology Analysis Data (Previous Visit)
+
+ADLBC and ADLBH contain one record per lab analysis parameter, per time point, per subject.
+
+ADLBC contains lab chemistry parameters and ADLBH contains hematology parameters and these data are derived from the SDTM LB (Laboratory Tests) domain. Two sets of lab parameters exist in ADLBC/ADLBH. One set contains the standardized lab value from the LB domain and the second set contains change from previous visit relative to normal range values.
+
+In some of the summaries the derived end-of-treatment visit (AVISITN=99) is also presented.
+
+The ADLBC and ADLBH datasets were split based on the values of the indicated variable. Note that this splitting was done to reduce the size of the resulting datasets and to demonstrate split datasets and not because of any guidance or other requirement to split these domains.
+
+### ADLBHY - Laboratory Results Hy's Law Analysis Data
+
+ADLBHY contains one record per lab test code per sample, per subject for the Hy's Law based analysis parameters. ADLBHY is derived from the ADLBC (Laboratory Results Chemistry Analysis Data) analysis dataset. It contains derived parameters based on Hy's law.
+
+### ADADAS - ADAS-COG Data
+
+ADADAS contains analysis data from the ADAS-Cog questionnaire, one of the primary efficacy endpoints. It contains one record per subject per parameter (ADAS-Cog questionnaire item) per VISIT. Visits are placed into analysis visits (represented by AVISIT and AVISITN) based on the date of the visit and the visit windows.
+
+### ADCIBC - CIBC Data
+
+ADCIBC contains analysis data from the from CIBIC+ questionnaire, one of the primary efficacy endpoints. It contains one record per subject per VISIT. Note that for all records, PARAM='CIBIC Score'. Visits are placed into analysis visits (represented by AVISIT and AVISITN) based on the date of the visit and the visit windows.
+
+### ADNPIX - NPI-X Item Analysis Data
+
+ADNPIX contains one record per subject per parameter (NPI-X questionnaire item, total score, and mean total score from Week 4 through Week 24) per analysis visit (AVISIT). The analysis visits (represented by AVISIT and AVISITN) are derived from days between assessment date and randomization date and based on the visit windows that were specified in the statistical analysis plan (SAP).
+
+# Data Conformance Summary
+
+## Conformance Inputs
+
+-   Were the analysis datasets evaluated for conformance with CDISC ADaM Validation Checks? Yes, Version of CDISO ADaM Validation Checks and software used: Pinnacle 21 Enterprise version 4.1.1
+
+-   Were the ADaM datasets evaluated in relation to define.xml? Yes
+
+-   Was define.xml evaluated? Yes
+
+## Issues Summary
+
+```{r}
+#| label: issue-summary-prep
+#| echo: false
+
+issue_df <- tibble::tibble(
+  rule_id = c("AD0258", "AD0018", "AD0320"),
+  datasets = c("ADAE", "ADLBC, ADLBCPV, ADLBH, ADLBHPV, ADVS, ADCIBC, ADLBNPIX", "ADSL"),
+  message = c("Record key from ADaM ADAE is not traceable to SDTM.AE (extra ADAE recs)", "Variable label mismatch between dataset and ADaM standard", "Non-standard dataset label"),
+  severity = c("Error", "Error", "Error"),
+  explanation = c("There are derived records in ADAE, this has no impact on the analysis.", "The label for ANL01FL in these datasets are 'Analysis Record Flag 01', this is in conformance with ADaM IG 1.0, this is an issue in P21 checks, and has no impact on the analysis.", "The label for ADSL is 'ADSL', this has no impact on the analysis")
+)
+
+issue_df_kbl <- kbl(
+  issue_df,
+  col.names = c("Rule ID", "Dataset(s)", "Diagnostic Message", "Severity", "Explanation")
+)
+
+```
+
+::: {.content-visible when-format="html"}
+```{r}
+issue_df_kbl %>%
+  kable_styling()
+```
+:::
+
+::: {.content-visible when-format="pdf"}
+```{r}
+issue_df_kbl %>%
+  kable_styling(latex_options = c("scale_down", "hold_position")) %>%
+  column_spec(2, width = "10em") %>%
+  column_spec(3, width = "10em") %>%
+  column_spec(4, width = "10em") %>%
+  column_spec(5, width = "15em")
+```
+:::
+
+# Submission of Programs
+
+## Description
+
+The sponsor has provided all programs for analysis results. They are all created on a Linux platform using R version 4.1.2.
+
+## ADaM Programs
+
+Not Applicable. This pilot project only submits programs for analysis results.
+
+## Analysis Output Programs
+
+The Shiny application included in this pilot follows a different structure than a traditional collection of analysis programs such as those included in the Pilot 1 eCTD transfer. The application is developed with a modular approach and assembled with the [`golem`](https://thinkr-open.github.io/golem) R package for enhanced code organization. A description of the primary scripts used within the application is given in the table below. The recommended steps to execute the Shiny application are described in Appendix 2.
+
+```{r}
+#| label: pilot2-programs
+pilot2_programs_df <- tibble::tibble(
+  name = c("app.R", "app_teal.R", "tm_t_demographic.R", "tm_g_kmplot.R", "tm_t_primary.R", "tm_t_efficacy.R"),
+  purpose = c("Facilitate execution of Shiny application in a local R session or deployed on a server",
+              "Assemble the application modules for use with the Teal package",
+              "Shiny module for demographic and baseline characteristics analysis",
+              "Shiny module for Kaplan-Meier plot of time to first dermatologic event",
+              "Shiny module for primary endpoint analysis ADAS Cog (11)",
+              "Shiny module for primary endpoint analysis Glucose (mmol/L)")
+)
+
+pilot2_programs_df_kbl <- kbl(
+  pilot2_programs_df,
+  col.names = c("Program Name", "Purpose")
+)
+
+pilot2_programs_df_kbl %>%
+  kable_styling(latex_options = c("HOLD_position")) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "20em")
+```
+
+For reference, below is a description of the analysis programs utilized in Pilot 1.
+
+```{r}
+#| label: pilot1-programs-prep
+#| echo: false
+pilot1_programs_df <- tibble::tibble(
+  name = paste0("tlf-", c("demographic.r", "primary.r", "efficacy.r", "kmplot.r")),
+  table_number = c(paste("Table", c("14-2.01", "14-3.01", "14-3.02")), "Figure 14.1"),
+  title = c("Summary of Demographic and Baseline Characteristics", "Primary Endpoint Analysis: ADAS Cog (11) - Change from Baseline to Week 24 - LOCF", "ANCOVA of Change from Baseline at Week 20", "KM plot for Time to First Dermatologic Event: Safety population")
+)
+
+pilot1_programs_df_kbl <- kbl(
+  pilot1_programs_df,
+  col.names = c("Program Name", "Output Table Number", "Title")
+) 
+```
+
+::: {.content-visible when-format="html"}
+```{r}
+#| label: pilot1-programs-html
+#| echo: false
+pilot1_programs_df_kbl %>%
+  kable_styling() %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "10em") %>%
+  column_spec(3, width = "20em")
+```
+:::
+
+::: {.content-visible when-format="pdf"}
+```{r}
+#| label: pilot1-programs-pdf
+#| echo: false
+pilot1_programs_df_kbl %>%
+  kable_styling(latex_options = c("hold_position")) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "10em") %>%
+  column_spec(3, width = "20em")
+```
+:::
+
+## Proprietary R Analysis Packages
+
+```{r}
+#| label: prop-packages
+#| echo: false
+
+prop_pkgs <- tibble::tibble(
+  package = "pilot2wrappers",
+  title = "A Shiny application for executing interactive displays and analyses.",
+  version = "0.1.0"
+)
+
+kbl(
+  prop_pkgs,
+  col.names = c("Package", "Title", "Version") 
+) %>%
+  kable_styling(latex_options = c("scale_down", "hold_position")) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "20em") %>%
+  column_spec(3, width = "10em")
+
+```
+
+## Open-source R Analysis Packages
+
+The following table lists the open-source R packages used to create and execute the Shiny application in this pilot. A listing of the open-source packages used for the Pilot 1 submission can be found in the ADRG for Pilot 1.
+
+```{r}
+#| label: open-packages-pilot2
+#| echo: false
+#| message: false
+library(dplyr)
+library(purrr)
+
+pkg <- desc::desc_get_deps() %>%
+  filter(type == "Imports") %>%
+  pull(package)
+
+# custom code to obtain package title and version
+pkg_desc_df <- tibble::tibble(package = pkg) %>%
+  mutate(title = purrr::map_chr(package, ~utils::packageDescription(.x, fields = "Title"))) %>%
+  mutate(version = purrr::map_chr(package, ~utils::packageDescription(.x, fields = "Version"))) %>%
+  arrange(package)
+
+kbl(
+  pkg_desc_df,
+  col.names = c("Package", "Title", "Version") 
+) %>%
+  kable_styling(latex_options = c("scale_down", "HOLD_position")) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "20em") %>%
+  column_spec(3, width = "10em")
+
+```
+
+```{r}
+#| label: open-packages-pilot1
+#| echo: false
+#| eval: false
+#| message: false
+library(dplyr)
+library(purrr)
+
+pkg <- c("cowplot", "dplyr", "emmeans", "ggplot2", "haven", "huxtable", "pharmaRTF")
+
+# custom code to obtain package title and version
+pkg_desc_df <- tibble::tibble(package = pkg) %>%
+  mutate(title = purrr::map_chr(package, ~utils::packageDescription(.x, fields = "Title"))) %>%
+  mutate(version = purrr::map_chr(package, ~utils::packageDescription(.x, fields = "Version"))) %>%
+  arrange(package)
+
+kbl(
+  pkg_desc_df,
+  col.names = c("Package", "Title", "Version") 
+) %>%
+  kable_styling(latex_options = c("scale_down", "HOLD_position")) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "20em") %>%
+  column_spec(3, width = "10em")
+```
+
+## List of Output Programs
+
+Not Applicable. This pilot project displays analysis output as a Shiny application where the R programs described in the **Analysis Output Programs** as a whole produce the Shiny application.
+
+```{r}
+#| label: pilot1-output-programs
+#| echo: false
+#| eval: false
+
+pilot1_output_df <- tibble::tibble(
+  name = paste0("tlf-", c("demographic.r", "kmplot.r", "efficacy.r", "primary.r")),
+  output = paste0("tlf-", c("demographic.output", "kmplot.pdf", "efficacy.rtf", "primary.rtf")),
+  data = c("ADSL.STUDYID ADSL.TRT01P ADSL.ITTFL ADSL.AGE ADSL.AGEGR1 ADSL.RACE ADSL.HEIGHTBL ADSL.WEIGHTBL ADSL.BMIBL ADSL.MMSETOT", "ADSL.STUDYID ADSL.USUBJID ADSL.SAFFL ADSL.TRT01A ADTTE.STUDYID ADTTE.USUBJID ADTTE.PARAMCD ADTTE.AVAL ADTTE.CNSR", "ADSL.STUDYID ADSL.USUBJID ADSL.ITTFL ADLBC.TRTP ADLBC.TRTPN ADLBC.PARAMCD ADLBC.AVISITN ADLBC.BASE ADLBC.AVAL ADLBC.CHG", "ADSL.TRT01P ADSL.USUBJID ADSL.EFFFL ADSL.ITTFL ADADAS.TRTP ADADAS.TRTPCD ADADAS.EFFFL ADADAS.ITTFL ADADAS.PARAMCD ADADAS.ANL01FL ADADAS.AVISIT ADADAS.AVISITN ADADAS.AVAL ADADAS.CHG"),
+  selection = c(
+"STUDYID=='CDISPILOT01'
+
+Population: ADSL.ITTFL=='Y'
+
+Treatment Groups: ADSL.TRT01P
+
+Placebo
+
+Xanomeline Low Dose
+
+Xanomeline High Dose",
+"STUDYID=='CDISPILOT01'
+
+Population: ADSL.SAFFL=='Y'
+
+Treatment Groups: ADSL.TRT01A
+
+Placebo
+
+Xanomeline Low Dose
+
+Xanomeline High Dose
+
+Parameters:
+
+ADTTE.PARAMCD=='TTDE'",
+"STUDYID=='CDISPILOT01'
+
+Population: 
+
+ADSL.ITTFL == 'Y' &
+
+ADLBC.TRTPN in (0, 81) & 
+
+ADLBC.PARAMCD == 'GLUC' & 
+
+ADLBC.AVISITN is not missing
+
+Treatment Groups: ADLBC.TRTPN
+
+Placebo
+
+Xanomeline High Dose",
+"Population:
+
+ADADAS.EFFFL == 'Y'
+
+ADADAS.ITTFL == 'Y'
+
+ADADAS.ANL01FL == 'Y'
+
+Treatment Groups: ADSL.TRTP
+
+Placebo
+
+Xanomeline Low Dose
+
+Xanomeline High Dose
+
+Parameters:
+
+ADADAS.PARAMCD == 'ACTOT'")
+)
+
+kbl(
+  pilot1_output_df,
+  col.names = c("Readable / Executable Code File Name", "Output Name", "Analysis Datasets & Vaiables", "Selection Criteria") 
+) %>%
+  kable_styling(latex_options = c("scale_down", "HOLD_position"), font_size = 10) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "10em") %>%
+  column_spec(3, width = "10em") %>%
+  column_spec(4, width = "10em")
+```
+
+# Directory Structure
+
+Study datasets and the Shiny application supportive files are organized in accordance to Study Data Technical Conformance Guide.
+
+```
+├── m1
+│   └── us
+│       └── cover-letter.pdf
+└── m5
+    └── datasets
+        └── rconsortiumpilot2
+            └── analysis
+                └── adam
+                    ├── datasets
+                    │   ├── adadas.xpt
+                    │   ├── adlbc.xpt
+                    │   ├── adsl.xpt
+                    │   ├── adtte.xpt
+                    │   ├── define2-0-0.xsl
+                    │   └── define.xml
+                    └── programs
+                        └── r1pkg.txt
+```
+
+```{r}
+#| label: pilot2-dir-structure
+#| echo: false
+#| eval: true
+
+dir_df <- tibble::tibble(
+  name = c("module", "  datasets", "    rconsortiumpilot2", "    analysis", "      adam", "      datasets", "      programs"),
+  index = 1:7,
+  desc = c("Refers to the eCTD module in which clinical study data is being submitted.", "Resides within the module folder as the top-level folder for clinical study data being submitted for m5.", "Study identifier or analysis type performed", "Contains folders for analysis datasets and software programs; arrange in designated level 6 subfolders", "Contains subfolders for ADaM datasets and corresponding software programs", "Contains ADaM datasets, analysis data reviewer’s guide, analysis results metadata and define files", "Contains software programs for analysis datasets and Shiny application")
+)
+
+kbl(
+  dir_df,
+  col.names = c("Directory", "Index", "Description")
+) %>%
+  kable_styling(latex_options = c("HOLD_position")) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "3em") %>%
+  column_spec(3, width = "20em")
+```
+
+```{r}
+#| label: pilot1-dir-structure
+#| echo: false
+#| eval: false
+
+dir_df <- tibble::tibble(
+  name = c("module", "  datasets", "    cdiscpilot1", "    analysis", "      adam", "      datasets", "      programs"),
+  index = 1:7,
+  desc = c("Refers to the eCTD module in which clinical study data is being submitted.", "Resides within the module folder as the top-level folder for clinical study data being submitted for m5.", "Study identifier or analysis type performed", "Contains folders for analysis datasets and software programs; arrange in designated level 6 subfolders", "Contains subfolders for ADaM datasets and corresponding software programs", "Contains ADaM datasets, analysis data reviewer’s guide, analysis results metadata and define files", "Contains software programs for analysis datasets and key tables and figures")
+)
+
+kbl(
+  dir_df,
+  col.names = c("Directory", "Index", "Description")
+) %>%
+  kable_styling(latex_options = c("hold_position")) %>%
+  column_spec(1, width = "15em") %>%
+  column_spec(2, width = "3em") %>%
+  column_spec(3, width = "20em")
+```
+
+::: {.content-hidden}
+
+# Appendix 1: Instructions to Execute Pilot 1 Analysis Programs in R {.unnumbered}
+
+1.  Install R
+
+Download and install R 4.1.2 for Windows from <https://cran.r-project.org/bin/windows/base/old/4.1.2/R-4.1.2-win.exe>.
+
+2.  Define Working Directory
+
+Create a temporary working directory, For example, `C:\tempwork`. Copy all submitted R programs into the temporary folder. All steps below should be executed in this working directory represented as `.` in the example R code below.
+
+3.  Specify R Package Repository
+
+The R packages are based on CRAN at 2021-08-31. To install the exact R package versions used in this project, run the code below to set the snapshot repository.
+
+``` r
+options(repos = "https://mran.microsoft.com/snapshot/2021-08-31")
+```
+
+4.  Install Open-Source R Packages
+
+In the same R session, install the required packages by running the code below.
+
+``` r
+install.packages(c("haven", "dplyr", "emmeans", "pkglite" , "r2rtf", 
+                   "rtables", "ggplot2", "cowplot", "visR", "Tplyr", 
+                   "pharmaRTF", "huxtable"))
+```
+
+5.  Install Proprietary R Packages
+
+The proprietary R package `pilot1wrappers` is packed in the file `r0pkg.txt`. In the same R session, restore the package structures and install them by running the code below. Adjust the output path as needed to use a writable local directory.
+
+``` r
+pkglite::unpack("r0pkg.txt", output = ".", install = TRUE)
+```
+
+6.  Update Path to Datasets and TLFs
+
+INPUT path: To re-run the analysis programs, define the path variable
+
+-   Path for ADaM data: `path$adam`
+
+OUTPUT path: To save the analysis results, define the path variable
+
+-   Path for output TLFs: `path$output`
+
+All of these paths must be defined before executing the analysis output program. For example:
+
+``` r
+path = list(
+  # Modify path to the actual location
+  adam = "path/to/esub/analysis/adam/datasets",
+  
+  # Output saved in current folder
+  output =  "."
+)                                       
+```
+
+7.  Execute Analysis Program
+
+To reproduce analysis results, rerun the following four programs:
+
+-   `tlf-demographic.r`
+-   `tlf-efficacy.r`
+-   `tlf-kmplot.r`
+-   `tlf-primary.r`
+
+:::
+
+# Appendix 1: Pilot 2 Shiny Application Installation and Usage {.unnumbered}
+
+To install and execute the Shiny application, follow all of the procedures below. Ensure that you note the location of where you downloaded the Pilot 2 eCTD submission files. For demonstration purposes, the procedures below assume the transfer has been saved to this location: `C:\pilot2`. 
+
+In addition, create a new directory to hold the unpacked Pilot 2 Shiny application files. For demonstration purposes, the procedures below assume the new directory is this location: `C:\pilot2_files`.
+
+## Installation of R and Optional Software
+
+Download and install R 4.1.2 for Windows from <https://cran.r-project.org/bin/windows/base/old/4.1.2/R-4.1.2-win.exe>. While optional, It is also recommended to view the Shiny application within the RStudio IDE. You can download RStudio for Windows by visiting <https://www.rstudio.com/products/rstudio/download/#download>. 
+
+## Installation of R Packages
+
+A minimum set of R packages are required to ensure the Pilot 2 Shiny application files are successfully unpacked and the custom package environment used for the application is replicated correctly. The first packages to install are the `remotes` and `pkglite` packages:
+
+``` r
+install.packages(c("remotes", "pkglite"))
+
+# install version 0.15.2 of the renv package:
+remotes::install_version("renv", version = "0.15.2")
+```
+
+:::{.callout-note}
+The console may display a warning message about Rtools being required to build R packages. However the packages required by the Shiny application will not require custom compilation involving other languages like C++, hence the Rtools utility is not required for the application.
+:::
+
+
+## Extract Application Bundle
+
+Use the `pkglite` package to unpack the Shiny application bundle `r1pkg.txt` within the Pilot 2 eCTD submission transfer. This file is located in the following relative path within the eCTD transfer directory: 
+
+```
+m5\datasets\rconsortiumpilot2\analysis\adam\programs\r1pkg.txt
+```
+
+Enter the following command in the R console to extract the Shiny application files to the destiniation directory. 
+
+``` r
+pkglite::unpack(
+  input = "C:/pilot2/m5/datasets/rconsortiumpilot2/analysis/adam/programs/r1pkg.txt", 
+  output = "C:/pilot2_files"
+)
+```
+
+The console will display messages of unpacking and writing files to the destination directory. Note that the procedure creates a sub-directory called `pilot2wrappers` in the destination directory. Take note of that particular directory path on your system, as you will use this in the remaining procedures. In this example, the directory is located in the following path:
+
+```
+C:\pilot2_files\pilot2wrappers
+```
+
+## Initialize R Package Environment for Shiny Application
+
+The dependencies for the Shiny application are managed by the `renv` R package management system. To bootstrap the customized R package library used for the Shiny application, launch a new R session in the directory where you unpacked the application source files in the previous step. Use either of the following procedures depending on your R computing environment:
+
+### RStudio 
+
+Create a new RStudio Project within the `pilot2wrappers` directory:
+
+1. Select `File -> New Project`
+2. In the Create Project dialog box, choose **Existing Directory**
+3. In the Create Project from Existing Directory dialog box, click the **Browse** button and navigate to the `pilot2wrappers` directory. Once the location has been confirmed, click the **Create Project** button.
+
+RStudio will refresh the window and automatically install the `renv` package into the project directory. To complete the process of restoring the pilot R packages, run the following command in the R console:
+
+```
+renv::restore(prompt = FALSE)
+```
+
+The package installation procedure may take a few minutes or longer depending on internet bandwidth.
+
+### R Console
+
+Launch a new R session in the `pilot2wrappers` directory of the unpacked application directory. By default, the R Gui interface on Windows will launch a new R session in your default Windows home directory (typically the **Documents** folder). Perform the following steps to ensure R is launched in the proper directory.
+
+:::{.callout-note}
+The procedure below assumes R 4.1.2 has been installed in a default location. If you are unsure of the full path to the R GUI executable on your system, you can find the location on your system by performing the following steps:
+
+1. Open the Windows Start Menu and expand to show all applications.
+1. Navigate to the R entry and expand the section such that all R program entries are visible. 
+1. Right-click the `R x64 4.1.2` entry and select `More -> Open file location`. 
+1. A new folder window will open with the shortcut `R x64 4.1.2` highlighted. Right-click this entry and select **Properties**
+1. In the Properties window, copy the path specified in the **Target** text field. The portion of the text in quotations gives the full path to the `Rgui.exe` location on your system. 
+:::
+
+
+1. Open the Windows Powershell program by searching for Windows Powershell in the Windows Start menu.
+1. Change the current directory to the `pilot2wrappers` directory by running the following command (substitute the `pilot2_files` location for your appropriate directory as needed):
+
+```
+Set-Location -Path "C:\pilot2_files\pilot2wrappers"
+```
+
+1. Launch the Windows R GUI in this session by running the following command:
+
+```
+C:\"Program Files"\R\R-4.1.2\bin\x64\Rgui.exe
+```
+
+The R GUI will launch and automatically install the `renv` package into the project directory. To complete the process of restoring the pilot R packages, run the following command in the R console:
+
+```
+renv::restore(prompt = FALSE)
+```
+
+The package installation procedure may take a few minutes or longer depending on internet bandwidth.
+
+## Update Shiny Application Configuration
+
+The Shiny application needs one configuration update in order to import the ADaM data sets contained in the eCTD transfer. The data files are located in the following relative path within the eCTD transfer directory: 
+
+```
+m5\datasets\rconsortiumpilot2\analysis\adam\datasets
+```
+
+Run the following command in the R console (substitute the `pilot2` location for your appropriate directory as needed):
+
+``` r
+pilot2wrappers::set_data_path("C:/pilot2/m5/datasets/rconsortiumpilot2/analysis/adam/datasets")
+```
+
+## Launch Shiny Application
+
+To run the Shiny application, enter the following command in the R console:
+
+```r
+golem:::run_dev()
+```
+
+## Application Usage Guide
+
+The Shiny application contains 5 tabs, with the first table **App Information** selected by default. The relationship between the other application tabs and previously submitted analysis from Pilot 1 are described in the table below:
+
++-------------------+------------------------------------------------------------------------------------------------+
+| Application Tab   | Pilot 1 Output                                                                                 |
++===================+================================================================================================+
+| Demographic Table | Table 14-2.01 Summary of Demographic and Baseline Characteristics                              |
++-------------------+------------------------------------------------------------------------------------------------+
+| KM plot for TTDE  | Figure 14-1 Tiem to Dermatologic Event by Treatment Group                                      |
++-------------------+------------------------------------------------------------------------------------------------+
+| Primary Table     | Table 14-3.01 Primary Endpoint Analysis: ADAS Cog(11) - Change from Baseline to Week 24 - LOCF |
++-------------------+------------------------------------------------------------------------------------------------+
+| Efficacy Table    | Table 14-3.02 Primary Endpoint Analysis: Glucose (mmol/L) - Summary at Week 20 - LOCF          |
++-------------------+------------------------------------------------------------------------------------------------+
+
+: {tbl-colwidths="\[30,70\]"}
+
+The default display in the analysis tabs match with the outputs submitted in Pilot 1. The Shiny application enables subpopulation analysis using *Filters*. Within any tab, there are three sections related to Filters on the right-hand side of the page: **Active Filter Summary**, **Active Filter Variables**, and **Add Filter Variables**
+
+![](figures/app_screenshot1.png){width="50%"}
+
+Analysis example of performing subpopulation analysis for an age group:
+
+1.  Within the **Add Filter Variables** widget, click the box with the placeholder **Select variables to filter**.
+
+![](figures/app_screenshot2.png){width="50%"}
+
+2.  Scroll up/down or use the search bar to find the variable for subpopulation. Click the desired variable (**AGEYR1** in this example).
+
+![](figures/app_screenshot3.png){width="50%"}
+
+3.  In the **Active Filter Variables** widget, the selected variable with its available categories or levels will display. In this example, **AGEYR1** in this example) is displayed with three categories. If the selected variable in the previous step is a continuous variable, then a slider will appear for selecting a range of values.
+
+![](figures/app_screenshot4.png){width="50%"}
+
+4.  Select the target subpopulation (e.g. `>80`) and the analysis output displayed on the left hand side will be updated in real-time according to the selection, which in this example is equivalent to performing a filter on the **ADSL** data by `AGEGR1 == '>80'`.
+
+5.  In the Shiny application, the filters are considered as global and shared across the remaining analysis tabs. In this example, `AGEGR1 == '>80'` will be applied in other analysis tabs automatically, hence it is not necessary to manually perform the same filtering operation on the remaining tabs.
