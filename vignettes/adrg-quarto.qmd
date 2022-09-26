@@ -2,7 +2,7 @@
 title: "Analysis Data Reviewer's Guide"
 author: "R Consortium"
 subtitle: "R Consortium R Submission Pilot 2"
-date: "2022-09-23"
+date: "2022-09-26"
 format: 
   pdf:
     number-sections: true
@@ -34,7 +34,7 @@ library(magrittr)
 
 ## Purpose
 
-The Analysis Data Reviewer's Guide (ADRG) provides specific instructions for executing a Shiny application created with the R-language for viewing analysis results and performing custom subpopulation analysis based on the data sets and analytical methods used in the R Consortium R Submission Pilot 1. This document provides context for the analysis datasets and terminology that benefit from additional explanation beyond the Data Definition document (define.xml), as well as a summary of ADaM conformance findings. Appendices 1 and 2 provide detailed procedures for installing and configuring a local R environment to access the previous Pilot 1 content and to install the Shiny application for use within a local R session.
+The Analysis Data Reviewer's Guide (ADRG) provides specific instructions for executing a Shiny application created with the R-language for viewing analysis results and performing custom subpopulation analysis based on the data sets and analytical methods used in the R Consortium R Submission Pilot 1. This document provides context for the analysis datasets and terminology that benefit from additional explanation beyond the Data Definition document (define.xml), as well as a summary of ADaM conformance findings. Appendix 1 provides detailed procedures for installing and configuring a local R environment to view the included Shiny application.
 
 ## Study Data Standards and Dictionary Inventory
 
@@ -615,7 +615,7 @@ Create a temporary working directory, For example, `C:\tempwork`. Copy all submi
 
 The R packages are based on CRAN at 2021-08-31. To install the exact R package versions used in this project, run the code below to set the snapshot repository.
 
-``` r
+```r
 options(repos = "https://mran.microsoft.com/snapshot/2021-08-31")
 ```
 
@@ -623,7 +623,7 @@ options(repos = "https://mran.microsoft.com/snapshot/2021-08-31")
 
 In the same R session, install the required packages by running the code below.
 
-``` r
+```r
 install.packages(c("haven", "dplyr", "emmeans", "pkglite" , "r2rtf", 
                    "rtables", "ggplot2", "cowplot", "visR", "Tplyr", 
                    "pharmaRTF", "huxtable"))
@@ -633,7 +633,7 @@ install.packages(c("haven", "dplyr", "emmeans", "pkglite" , "r2rtf",
 
 The proprietary R package `pilot1wrappers` is packed in the file `r0pkg.txt`. In the same R session, restore the package structures and install them by running the code below. Adjust the output path as needed to use a writable local directory.
 
-``` r
+```r
 pkglite::unpack("r0pkg.txt", output = ".", install = TRUE)
 ```
 
@@ -649,7 +649,7 @@ OUTPUT path: To save the analysis results, define the path variable
 
 All of these paths must be defined before executing the analysis output program. For example:
 
-``` r
+```r
 path = list(
   # Modify path to the actual location
   adam = "path/to/esub/analysis/adam/datasets",
@@ -684,7 +684,7 @@ Download and install R 4.1.2 for Windows from <https://cran.r-project.org/bin/wi
 
 A minimum set of R packages are required to ensure the Pilot 2 Shiny application files are successfully unpacked and the custom package environment used for the application is replicated correctly. The first packages to install are the `remotes` and `pkglite` packages:
 
-``` r
+```r
 install.packages(c("remotes", "pkglite"))
 
 # install version 0.15.2 of the renv package:
@@ -700,13 +700,13 @@ The console may display a warning message about Rtools being required to build R
 
 Use the `pkglite` package to unpack the Shiny application bundle `r1pkg.txt` within the Pilot 2 eCTD submission transfer. This file is located in the following relative path within the eCTD transfer directory: 
 
-```
+```sh
 m5\datasets\rconsortiumpilot2\analysis\adam\programs\r1pkg.txt
 ```
 
-Enter the following command in the R console to extract the Shiny application files to the destiniation directory. 
+Enter the following command in the R console to extract the Shiny application files to the destination directory. 
 
-``` r
+```r
 pkglite::unpack(
   input = "C:/pilot2/m5/datasets/rconsortiumpilot2/analysis/adam/programs/r1pkg.txt", 
   output = "C:/pilot2_files"
@@ -715,7 +715,7 @@ pkglite::unpack(
 
 The console will display messages of unpacking and writing files to the destination directory. Note that the procedure creates a sub-directory called `pilot2wrappers` in the destination directory. Take note of that particular directory path on your system, as you will use this in the remaining procedures. In this example, the directory is located in the following path:
 
-```
+```sh
 C:\pilot2_files\pilot2wrappers
 ```
 
@@ -733,7 +733,7 @@ Create a new RStudio Project within the `pilot2wrappers` directory:
 
 RStudio will refresh the window and automatically install the `renv` package into the project directory. To complete the process of restoring the pilot R packages, run the following command in the R console:
 
-```
+```r
 renv::restore(prompt = FALSE)
 ```
 
@@ -755,21 +755,21 @@ The procedure below assumes R 4.1.2 has been installed in a default location. If
 
 
 1. Open the Windows Powershell program by searching for Windows Powershell in the Windows Start menu.
-1. Change the current directory to the `pilot2wrappers` directory by running the following command (substitute the `pilot2_files` location for your appropriate directory as needed):
+2. Change the current directory to the `pilot2wrappers` directory by running the following command (substitute the `pilot2_files` location for your appropriate directory as needed):
 
-```
+```sh
 Set-Location -Path "C:\pilot2_files\pilot2wrappers"
 ```
 
-1. Launch the Windows R GUI in this session by running the following command:
+3. Launch the Windows R GUI in this session by running the following command:
 
-```
+```sh
 C:\"Program Files"\R\R-4.1.2\bin\x64\Rgui.exe
 ```
 
 The R GUI will launch and automatically install the `renv` package into the project directory. To complete the process of restoring the pilot R packages, run the following command in the R console:
 
-```
+```r
 renv::restore(prompt = FALSE)
 ```
 
@@ -779,13 +779,13 @@ The package installation procedure may take a few minutes or longer depending on
 
 The Shiny application needs one configuration update in order to import the ADaM data sets contained in the eCTD transfer. The data files are located in the following relative path within the eCTD transfer directory: 
 
-```
+```sh
 m5\datasets\rconsortiumpilot2\analysis\adam\datasets
 ```
 
 Run the following command in the R console (substitute the `pilot2` location for your appropriate directory as needed):
 
-``` r
+```r
 pilot2wrappers::set_data_path("C:/pilot2/m5/datasets/rconsortiumpilot2/analysis/adam/datasets")
 ```
 

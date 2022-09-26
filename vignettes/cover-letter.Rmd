@@ -3,7 +3,7 @@ title: "R Consortium R Submission Pilot 2 Cover Letter"
 author: "Eric Nantz"
 output:
   pagedown::html_letter:
-    self_contained: false
+    self_contained: true
 links-to-footnotes: true
 paged-footnotes: true
 # uncomment this line to produce HTML and PDF in RStudio:
@@ -50,7 +50,7 @@ This letter serves as an introduction to the R Consortium R submission Pilot 2. 
 The R Consortium R submission Pilot 2 submission package follows the eCTD folder structure and contains the following module 5 deliverables:
 
 - A cover letter
-- SAS transport files (xpt) from CDIS ADaM/SDTM submission pilot <u>CDISCPILOT01</u>
+- SAS transport files (xpt) from CDISC ADaM/SDTM submission pilot <u>CDISCPILOT01</u>
 - One proprietary R package "pilot2wrappers" which enables execution of the Shiny application
 - An Analysis Data Reviewer's Guide (ADRG)
 
@@ -60,7 +60,7 @@ In this pilot, we aimed to provide a working example of R submission in eCTD for
 - Reconstruct and load the submitted proprietary R package (i.e. "pilot2wrappers")
 - Install and load open source packages used in this submission
 - Execute the Shiny application within an R session
-- Share potential improvements to the submission deliverables and processes via a written communications
+- Share potential improvements to the submission deliverables and processes via a written communication
 
 All data, code, material and communications from this pilot will be shared publicly.
 
@@ -69,4 +69,5 @@ Different open-source packages were used to create the Shiny application. Evalua
 On behalf of the R Consortium R Submission Working Group, we hope the pilot 2 project can establish a working example to guide the industry for future submission of Shiny applications created with the R language.
 
 Kind regards, 
+
 The R Consortium R Submission Pilot 2 Project Team
