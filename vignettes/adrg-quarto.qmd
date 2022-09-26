@@ -14,6 +14,7 @@ format:
   html:
     toc: true
     toc-location: body
+    self-contained: true
     execute:
       echo: false
       warning: false
