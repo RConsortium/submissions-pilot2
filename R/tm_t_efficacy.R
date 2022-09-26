@@ -49,7 +49,7 @@ ui_t_efficacy <- function(id, datasets) {
     tags$br(),
     tags$hr(),
     fluidRow(
-      h6(tags$i("*Abbreviation: CI=Confidence Interval; LS=Least Squarses; SD=Standard Deviation"))
+      h6(tags$i("Abbreviations: CI=Confidence Interval; LS=Least Squarses; SD=Standard Deviation"))
     )
   )
 }
@@ -136,10 +136,12 @@ srv_t_efficacy <- function(input, output, session, datasets) {
             "N","Mean (SD)",
             "N","Mean (SD)","LS Mean (95% CI)")
     colgr=c(1,2,2,3,3,4,4,4)
+    colwidths <- c(rep(100, 7), 150)
     colgrn=c("","Baseline","Week 20","Change from Baseline")
-    collist = lapply(1:ncol(apr0ancova1),function(xx) colDef(name=coln[xx]))
+    collist = purrr::map2(1:ncol(apr0ancova1), colwidths, ~{
+      colDef(name = coln[.x], minWidth = .y)
+    })
     names(collist) = names(apr0ancova1)
- 
     reactable(
       apr0ancova1,
       columns = collist,
