@@ -1,3 +1,9 @@
+# pilot2wrappers 0.4.0
+
+- Ensure column width of efficacy table's 95% CI header is wide enough to fit in a single row
+- Add missing footnotes to primary table
+- Add new vignettes for ADRG as a [Quarto](https://quarto.org/) document (with HTML and PDF output) and cover letter as a R-Markdown document using the [`{pagedown}`](https://pagedown.rbind.io/#letter)  package.
+
 # pilot2wrappers 0.3.0
 
 - Enable support for using `{pkglite}` to create package bundle compliant with ECTD submission transfer standards
