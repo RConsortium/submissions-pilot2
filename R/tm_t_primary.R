@@ -9,7 +9,12 @@
 #' @importFrom shiny NS tagList uiOutput
 ui_t_primary <- function(id, datasets) {
   ns <- NS(id)
-  uiOutput(ns("table"))
+  tagList(
+    uiOutput(ns("table")),
+    p("[1] Based on Analysis of covariance (ANCOVA) model with treatment and site group as factors and baseline value as a covariate."),
+    p("[2] Test for a non-zero coefficient for treatment (dose) as a continuous variable."),
+    p("[3] Pairwise comparison with treatment as a categorical variable: p-values without adjustment for multiple comparisons.")
+  )
 }
 
 #' srv_t_primary Server Functions
