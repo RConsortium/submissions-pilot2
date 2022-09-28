@@ -34,7 +34,7 @@ library(magrittr)
 
 ## Purpose
 
-The Analysis Data Reviewer's Guide (ADRG) provides specific instructions for executing a Shiny application created with the R-language for viewing analysis results and performing custom subpopulation analysis based on the data sets and analytical methods used in the R Consortium R Submission Pilot 1. This document provides context for the analysis datasets and terminology that benefit from additional explanation beyond the Data Definition document (define.xml), as well as a summary of ADaM conformance findings. Appendix 1 provides detailed procedures for installing and configuring a local R environment to view the included Shiny application.
+The Analysis Data Reviewer's Guide (ADRG) provides specific instructions for executing a Shiny application created with the R-language for viewing analysis results and performing custom subpopulation analysis based on the data sets and analytical methods used in the [R Consortium R Submission Pilot 1](https://github.com/RConsortium/submissions-pilot1-to-fda). This document provides context for the analysis datasets and terminology that benefit from additional explanation beyond the Data Definition document (define.xml), as well as a summary of ADaM conformance findings. Appendix 1 provides detailed procedures for installing and configuring a local R environment to view the included Shiny application. The recommended steps to execute the Shiny application are described in Appendix 2.
 
 ## Study Data Standards and Dictionary Inventory
 
@@ -66,7 +66,7 @@ Protocol Number: CDISCPilot1
 
 Protocol Title: Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in Patients with Mild to Moderate Alzheimer's Disease
 
-The reference documents can be found at <https://bitbucket.cdisc.org/projects/CED/repos/sdtm-adam-pilot-project/browse/updated-pilot-submission-package/900172/>
+The reference documents can be found at <https://github.com/phuse-org/phuse-scripts/blob/master/data/adam/TDF_ADaM_v1.0.zip>
 
 ## Protocol Design in Relation to ADaM Concepts
 
@@ -670,6 +670,10 @@ To reproduce analysis results, rerun the following four programs:
 
 :::
 
+
+\appendix
+\renewcommand{\thesection}{A}
+
 # Appendix 1: Pilot 2 Shiny Application Installation and Usage {.unnumbered}
 
 To install and execute the Shiny application, follow all of the procedures below. Ensure that you note the location of where you downloaded the Pilot 2 eCTD submission files. For demonstration purposes, the procedures below assume the transfer has been saved to this location: `C:\pilot2`. 
@@ -709,7 +713,8 @@ Enter the following command in the R console to extract the Shiny application fi
 ```r
 pkglite::unpack(
   input = "C:/pilot2/m5/datasets/rconsortiumpilot2/analysis/adam/programs/r1pkg.txt", 
-  output = "C:/pilot2_files"
+  output = "C:/pilot2_files",
+  install = TRUE
 )
 ```
 
@@ -796,8 +801,8 @@ To run the Shiny application, enter the following command in the R console:
 ```r
 golem:::run_dev()
 ```
+# Appendix 2: Application Usage Guide {.unnumbered}
 
-## Application Usage Guide
 
 The Shiny application contains 5 tabs, with the first table **App Information** selected by default. The relationship between the other application tabs and previously submitted analysis from Pilot 1 are described in the table below:
 
