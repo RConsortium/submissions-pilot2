@@ -11,6 +11,7 @@ ui_t_primary <- function(id, datasets) {
   ns <- NS(id)
   tagList(
     uiOutput(ns("table")),
+    p("Statistical model and comparison p-values removed when applying data filters. Refer to the application information for additional details."),
     p("[1] Based on Analysis of covariance (ANCOVA) model with treatment and site group as factors and baseline value as a covariate."),
     p("[2] Test for a non-zero coefficient for treatment (dose) as a continuous variable."),
     p("[3] Pairwise comparison with treatment as a categorical variable: p-values without adjustment for multiple comparisons.")
@@ -61,7 +62,7 @@ srv_t_primary <- function(input, output, session, datasets) {
 
 
     ## -----------------------------------------------------------------------------------------------------------------------------------
-    model_portion <- efficacy_models(adas, 'CHG', 24)
+    model_portion <- efficacy_models(adas, 'CHG', 24, !filter_active(datasets))
 
 
     ## -----------------------------------------------------------------------------------------------------------------------------------

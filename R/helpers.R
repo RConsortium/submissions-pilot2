@@ -88,3 +88,22 @@ set_data_path <- function(path) {
   golem::amend_golem_config("adam_path", path, talkative = FALSE)
   invisible(TRUE)
 }
+
+#' check if a filter is active in a teal module
+#' 
+#' @param datasets instance of teal filtered datasets class
+#' 
+#' @return boolean, TRUE if a filter is applied, FALSE otherwise
+filter_active <- function(datasets) {
+  result <- FALSE
+  if (length(names(datasets$get_filter_state()) > 0)) {
+    filter_use <- purrr::map_lgl(names(datasets$get_filter_state()), ~{
+      # grab call of filter code
+      f_call <- datasets$get_call(.x)$filter
+      f_call != glue::glue("{.x}_FILTERED <- {.x}")
+    })
+    result <- any(filter_use)
+  }
+  
+  return(result)
+}

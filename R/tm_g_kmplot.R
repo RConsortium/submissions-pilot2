@@ -9,7 +9,7 @@
 #' @importFrom shiny NS tagList plotOutput
 ui_g_kmplot <- function(id, datasets) {
   ns <- NS(id)
-  plotOutput(ns("plot"))
+  plotOutput(ns("plot"), height = "800px")
 }
 
 #' srv_g_kmplot Server Functions

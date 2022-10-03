@@ -4,7 +4,7 @@
 \alias{efficacy_models}
 \title{ANCOVA Model data processing necessary for Table 14-3.01}
 \usage{
-efficacy_models(data, var = NULL, wk = NULL)
+efficacy_models(data, var = NULL, wk = NULL, show_pvalue = TRUE)
 }
 \arguments{
 \item{data}{Source dataset (filtered by flags)}
@@ -12,6 +12,8 @@ efficacy_models(data, var = NULL, wk = NULL)
 \item{var}{Variable on which model should be run}
 
 \item{wk}{Visit to be modeled}
+
+\item{show_pvalue}{Indicator to display p-values in table}
 }
 \value{
 Formatted dataframe

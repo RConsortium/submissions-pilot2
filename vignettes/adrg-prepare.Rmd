@@ -89,7 +89,12 @@ renv_spec3 <- file_spec(
   recursive = TRUE
 )
 
-golem_spec <- file_auto("dev")
+golem_spec <- file_spec(
+  "dev",
+  pattern = "^run",
+  format = "text",
+  recursive = FALSE
+)
 
 file_ectd2 <- file_spec(
   ".",

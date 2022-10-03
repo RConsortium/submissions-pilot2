@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.Ruserdata
+inst/
+rsconnect/
+dev/
+vignettes/
+pkgdown/
+.devcontainer/

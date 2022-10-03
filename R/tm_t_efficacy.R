@@ -49,7 +49,8 @@ ui_t_efficacy <- function(id, datasets) {
     tags$br(),
     tags$hr(),
     fluidRow(
-      h6(tags$i("Abbreviations: CI=Confidence Interval; LS=Least Squarses; SD=Standard Deviation"))
+      h6(tags$i("Abbreviations: CI=Confidence Interval; LS=Least Squares; SD=Standard Deviation")),
+      h6(tags$p("Statistical model and comparison p-values removed when applying data filters. Refer to the application information for additional details."))
     )
   )
 }
@@ -112,7 +113,7 @@ srv_t_efficacy <- function(input, output, session, datasets) {
       mutate(
         comp = "Study Drug vs. Placebo",
         mean = fmt_ci(estimate, lower, upper),
-        p = fmt_pval(p.value)
+        p = ifelse(filter_active(datasets), "Not Applicable", fmt_pval(p.value))
       ) %>%
       select(comp:p)
     
@@ -168,7 +169,7 @@ srv_t_efficacy <- function(input, output, session, datasets) {
     reactable(
       apr0ancova2,
       columns = collist,
-      defaultColDef = colDef(footerStyle = list(fontStyle = "itatlic"))
+      defaultColDef = colDef(footerStyle = list(fontStyle = "italic"))
     )
   })
 }

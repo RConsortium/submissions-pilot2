@@ -3,8 +3,6 @@
 .RData
 .Ruserdata
 pilot2wrappers.Rcheck/
-pilot2wrappers*.tar.gz
-pilot2wrappers*.tgz
 inst/doc
 .DS_Store
 rsconnect/
