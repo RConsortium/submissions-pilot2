@@ -1,6 +1,6 @@
 # Project Level Setup
 R_version <- "4.2.0"																                  # set up project R version
-snapshot  <- "2022-02-01" 									                          # set up snapshot date
+snapshot  <- "2022-09-01" 									                          # set up snapshot date
 teal_snapshot <- "2022-06-09"
 repos <- c(
   paste0("https://packagemanager.rstudio.com/cran/", snapshot), 
