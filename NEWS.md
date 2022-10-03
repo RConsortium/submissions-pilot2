@@ -1,3 +1,10 @@
+# pilot2wrappers 0.5.0
+
+- Hide p-values when a data filter is applied, and display only when no filters are applied. This addresses comments from FDA reviewers after they saw a preview of the application.
+- Add a new description in the App Information module regarding display of p-values.
+- Add another footnote to the primary and efficacy table displays regarding the p-value display.
+- Increase plot window height for KM module, improving readability
+
 # pilot2wrappers 0.4.0
 
 - Ensure column width of efficacy table's 95% CI header is wide enough to fit in a single row
