@@ -1,7 +1,10 @@
-## Introduction
+# Introduction
 
 This application is intended for a pilot submission to the FDA composing of a Shiny application, as part of the [R Submissions Working Group](https://rconsortium.github.io/submissions-wg/) Pilot 2. The data sets and results displayed in the application originate from the [Pilot 1 project](https://rconsortium.github.io/submissions-wg/pilot-overall.html#pilot-1---common-analyses). Below is a brief description of the rest of the application:
 
+## Note on Dynamic Filters
+
+This application enables dynamic filtering of the input datasets used within each of the modules described below. When one or more filters are applied, the statistical estimates displayed in the table or visualization will dynamically update. However, since the statistical models and comparison methods were not powered for dynamic subgroups produced by these filters, p-values will be removed from the view until all filters are removed.
 ### Demographic Table
 
 In this interface, summary statistics associated with baseline clinical characteristics and other demographic factors is shown.

@@ -10,6 +10,7 @@
 #' @param data Source dataset (filtered by flags)
 #' @param var Variable on which model should be run
 #' @param wk Visit to be modeled
+#' @param show_pvalue Indicator to display p-values in table
 #'
 #' @return Formatted dataframe
 #' 
@@ -17,7 +18,7 @@
 #' @importFrom stats drop1 confint
 #' @export
 #'
-efficacy_models <- function(data, var=NULL, wk=NULL) {
+efficacy_models <- function(data, var=NULL, wk=NULL, show_pvalue = TRUE) {
   # Need to set contrasts to work for Type III SS. See analysis results metadata for
   # table 14-3.01. Reference for R here: https://www.r-bloggers.com/anova-%E2%80%93-type-iiiiii-ss-explained/
   op <- options(contrasts = c("contr.sum","contr.poly"))
@@ -55,7 +56,7 @@ efficacy_models <- function(data, var=NULL, wk=NULL) {
   
   # Pull it out into a table
   sect1 <- tibble::tibble(row_label=c('p-value(Dose Response) [1][2]'),
-                  `81` = c(num_fmt(ancova[2, 'Pr(>F)'], int_len=4, digits=3, size=12))
+                  `81` = ifelse(show_pvalue, c(num_fmt(ancova[2, 'Pr(>F)'], int_len=4, digits=3, size=12)), "Not Applicable")
   ) %>%
     pad_row()
   
@@ -81,7 +82,7 @@ efficacy_models <- function(data, var=NULL, wk=NULL) {
     rowwise() %>%
     # Create the display strings
     mutate(
-      p = num_fmt(p.value, int_len=4, digits=3, size=12),
+      p = ifelse(show_pvalue, num_fmt(p.value, int_len=4, digits=3, size=12), "Not Applicable"),
       diff_se = as.character(
         glue::glue('{num_fmt(estimate, int_len=2, digits=1, size=4)} ({num_fmt(SE, int_len=1, digits=2, size=4)})')
       ),
