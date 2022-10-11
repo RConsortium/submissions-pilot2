@@ -1,3 +1,8 @@
+# pilot2wrappers 0.6.0
+
+- Remove Teal filters for every module except KM-plot to address FDA reviewer feedback
+- Increase risk table and plot label font sizes
+- Add bootstrap alert box with subgroup disclaimer in KM-plot module
 # pilot2wrappers 0.5.0
 
 - Hide p-values when a data filter is applied, and display only when no filters are applied. This addresses comments from FDA reviewers after they saw a preview of the application.
