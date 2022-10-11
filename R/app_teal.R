@@ -64,7 +64,7 @@ create_teal <- function() {
       )
       
     ),
-    header = "Pilot2 Shiny Application",
+    header = "Pilot 2 Shiny Application",
     footer = tags$p(class="text-muted", "Source: R Consortium")
   )
   
