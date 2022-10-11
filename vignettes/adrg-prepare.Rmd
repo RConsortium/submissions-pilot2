@@ -116,7 +116,7 @@ path$home %>%
     renv_spec3,
     golem_spec
   ) %>%
-  pack(output = "ectd/r1pkg.txt")
+  pack(output = file.path(rprojroot::find_root("DESCRIPTION"), "vignettes/ectd/r1pkg.txt"))
 ```
 
 ## Application Installation (Dry run) 
