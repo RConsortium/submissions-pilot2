@@ -9,7 +9,14 @@
 #' @importFrom shiny NS tagList plotOutput
 ui_g_kmplot <- function(id, datasets) {
   ns <- NS(id)
-  plotOutput(ns("plot"), height = "800px")
+  tagList(
+    shinyWidgets::alert(
+      tagList(tags$b("Important Information:"), tags$p("The analyses performed when activating filters are ", tags$b("exploratory."))),
+      status = "info",
+      dismissible = TRUE
+    ),
+    plotOutput(ns("plot"), height = "800px")
+  )
 }
 
 #' srv_g_kmplot Server Functions
