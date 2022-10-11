@@ -11,7 +11,7 @@ ui_g_kmplot <- function(id, datasets) {
   ns <- NS(id)
   tagList(
     shinyWidgets::alert(
-      tagList(tags$b("Important Information:"), tags$p("The analyses performed when activating filters are ", tags$b("exploratory."))),
+      tagList(tags$b("Important Information:"), tags$p("The analyses performed when utilizing subgroups or other subsets of the source data sets are considered ", tags$b("exploratory."), tags$p("Refer to the Application Information tab for additional details."))),
       status = "info",
       dismissible = TRUE
     ),
