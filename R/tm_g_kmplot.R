@@ -63,17 +63,22 @@ srv_g_kmplot <- function(input, output, session, datasets) {
       visR::add_CI() 
 
     KM <- KM +
+      ggplot2::theme(axis.text = element_text(size = rel(1.3)),
+                     axis.title = element_text(size = rel(1.4)),
+                     legend.text = element_text(size = rel(1.3)),
+                     legend.title = element_text(size = rel(1.4))) +
       ggplot2::geom_hline(yintercept=0.5, linetype = "dashed")
 
     KM <- KM %>%
-      visR::add_risktable(group = "statlist")
+      add_risktable2(group = "statlist")
+      #visR::add_risktable(group = "statlist")
 
     title <- cowplot::ggdraw() +
       cowplot::draw_label(
         "KM plot for Time to First Dermatologic Event: Safety population\n",
         fontfamily = "sans",
         fontface = "bold",
-        size=10
+        size=16
       )
 
     caption <- cowplot::ggdraw() +
@@ -84,7 +89,7 @@ srv_g_kmplot <- function(input, output, session, datasets) {
           paste0(Sys.time())
         ),
         fontfamily = "sans",
-        size=10
+        size=12
       )
 
     KM <- cowplot::plot_grid(
