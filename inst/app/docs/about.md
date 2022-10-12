@@ -4,7 +4,7 @@ This application is intended for a pilot submission to the FDA composing of a Sh
 
 ## Note on Dynamic Filters
 
-This application enables dynamic filtering of the input datasets used within each of the modules described below. When one or more filters are applied, the statistical estimates displayed in the table or visualization will dynamically update. However, since the statistical models and comparison methods were not powered for dynamic subgroups produced by these filters, p-values will be removed from the view until all filters are removed.
+This application enables dynamic filtering of the input datasets used in the Kaplan-Meier (KM) Plot module for TTDE. When one or more filters are applied, the statistical estimates displayed in the visualization will dynamically update. Any statistical analyses utilizing subgroups of the original data sets are deemed **exploratory** and not pre-specified.
 ### Demographic Table
 
 In this interface, summary statistics associated with baseline clinical characteristics and other demographic factors is shown.

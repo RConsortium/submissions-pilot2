@@ -9,7 +9,14 @@
 #' @importFrom shiny NS tagList plotOutput
 ui_g_kmplot <- function(id, datasets) {
   ns <- NS(id)
-  plotOutput(ns("plot"), height = "800px")
+  tagList(
+    shinyWidgets::alert(
+      tagList(tags$b("Important Information:"), tags$p("The analyses performed when utilizing subgroups or other subsets of the source data sets are considered ", tags$b("exploratory."), tags$p("Refer to the Application Information tab for additional details."))),
+      status = "info",
+      dismissible = TRUE
+    ),
+    plotOutput(ns("plot"), height = "800px")
+  )
 }
 
 #' srv_g_kmplot Server Functions
@@ -56,17 +63,22 @@ srv_g_kmplot <- function(input, output, session, datasets) {
       visR::add_CI() 
 
     KM <- KM +
+      ggplot2::theme(axis.text = element_text(size = rel(1.3)),
+                     axis.title = element_text(size = rel(1.4)),
+                     legend.text = element_text(size = rel(1.3)),
+                     legend.title = element_text(size = rel(1.4))) +
       ggplot2::geom_hline(yintercept=0.5, linetype = "dashed")
 
     KM <- KM %>%
-      visR::add_risktable(group = "statlist")
+      add_risktable2(group = "statlist")
+      #visR::add_risktable(group = "statlist")
 
     title <- cowplot::ggdraw() +
       cowplot::draw_label(
         "KM plot for Time to First Dermatologic Event: Safety population\n",
         fontfamily = "sans",
         fontface = "bold",
-        size=10
+        size=16
       )
 
     caption <- cowplot::ggdraw() +
@@ -77,7 +89,7 @@ srv_g_kmplot <- function(input, output, session, datasets) {
           paste0(Sys.time())
         ),
         fontfamily = "sans",
-        size=10
+        size=12
       )
 
     KM <- cowplot::plot_grid(

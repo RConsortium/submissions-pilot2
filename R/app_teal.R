@@ -42,7 +42,7 @@ create_teal <- function() {
         label = "Demographic Table",
         ui = ui_t_demographic,
         server = srv_t_demographic,
-        filters = "ADSL"
+        filters = NULL
       ),
       module(
         label = "KM plot for TTDE",
@@ -54,17 +54,17 @@ create_teal <- function() {
         label = "Primary Table",
         ui = ui_t_primary,
         server = srv_t_primary,
-        filters = c("ADSL", "ADAS")
+        filters = NULL
       ),
       module(
         label = "Efficacy Table",
         ui = ui_t_efficacy,
         server = srv_t_efficacy,
-        filters = c("ADSL", "ADLB")
+        filters = NULL
       )
       
     ),
-    header = "Pilot2 Shiny Application",
+    header = "Pilot 2 Shiny Application",
     footer = tags$p(class="text-muted", "Source: R Consortium")
   )
   
