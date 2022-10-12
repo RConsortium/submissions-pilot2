@@ -45,7 +45,7 @@ Beltsville, MD 20705-1266
 
 Dear Sir/Madam:
 
-This letter serves as an introduction to the R Consortium R submission Pilot 2. The objective of the R Consortium R submission Pilot 2 Project is to test the concept that a Shiny application created with the R-language can be successfully bundled into a submission package and transferred successfully to FDA reviewers. All submission materials and communications from this pilot will be shared publicly, with the aim of providing a working example for future R language based FDA submissions which include Shiny applications. This is an FDA-industry collaboration through the non-profit organization R Consortium.
+This letter serves as an introduction to the R Consortium R submission Pilot 2. The objective of the R Consortium R submission Pilot 2 Project is to test the concept that a Shiny application created with the R-language can be successfully bundled into a submission package and transferred to FDA reviewers. All submission materials and communications from this pilot will be shared publicly, with the aim of providing a working example for future R language based FDA submissions which include Shiny applications. This is an FDA-industry collaboration through the non-profit organization R Consortium.
 
 The R Consortium R submission Pilot 2 submission package follows the eCTD folder structure and contains the following module 5 deliverables:
 
@@ -54,12 +54,11 @@ The R Consortium R submission Pilot 2 submission package follows the eCTD folder
 - One proprietary R package "pilot2wrappers" which enables execution of the Shiny application
 - An Analysis Data Reviewer's Guide (ADRG)
 
-In this pilot, we aimed to provide a working example of R submission in eCTD format to the pharmaceutical industry in compliance with the FDA Electronic Submissions Gateway requirements. Based on the submission package, FDA Staff can review and reproduce submitted R codes. More specifically, we expect the FDA Staff to
+In this pilot, we aimed to provide a working example of a Shiny application created with R contained within a submission in eCTD format to the pharmaceutical industry in compliance with the FDA Electronic Submissions Gateway requirements. Based on the submission package, FDA Staff can review and reproduce submitted R codes. The aforementioned ADRG contains a comprehensive description of the Shiny applicaiton components as well as specific instructions for executing the Shiny application on a local R environment. More specifically, we expect the FDA Staff to
 
 - Receive electronic submission packages in eCTD format
-- Reconstruct and load the submitted proprietary R package (i.e. "pilot2wrappers")
-- Install and load open source packages used in this submission
-- Execute the Shiny application within an R session
+- Install and load open source R packages used as dependencies of the included Shiny application
+- Reconstruct and load the submitted Shiny application contained in the "pilot2wrappers" R package
 - Share potential improvements to the submission deliverables and processes via a written communication
 
 All data, code, material and communications from this pilot will be shared publicly.
