@@ -40,7 +40,7 @@
              "Mean (SD)" = c(mean(x), sd(x)),
              "Median" = median(x),
              "Min - Max" = range(x),
-             .formats = c("xx.x (xx.x)", "xx.xx", "xx.xx - xx.xx")
+             .formats = c("xx.xx (xx.xx)", "xx.xx", "xx.xx - xx.xx")
            )
          } else if (is.factor(x) || is.character(x)) {
            in_rows(.list = list_wrap_x(table)(x))
