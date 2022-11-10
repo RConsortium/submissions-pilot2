@@ -89,7 +89,7 @@ srv_t_efficacy <- function(input, output, session, datasets) {
     apr0ancova1 <- merge(t11, t12) %>%
       mutate(emmean_sd = SE * sqrt(df)) %>%
       mutate(
-        Trt = c("Study Drug", "Placebo"),
+        Trt = c("Xanomeline High Dose", "Placebo"),
         N1 = N,
         Mean1 = fmt_est(mean_bl, sd_bl),
         N2 = N,
