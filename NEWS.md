@@ -1,3 +1,5 @@
+# pilot2wrappers 0.7.0
+
 # pilot2wrappers 0.6.0
 
 - Remove Teal filters for every module except KM-plot to address FDA reviewer feedback
