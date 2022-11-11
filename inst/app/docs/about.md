@@ -1,10 +1,6 @@
 # Introduction
 
 This application is intended for a pilot submission to the FDA composing of a Shiny application, as part of the [R Submissions Working Group](https://rconsortium.github.io/submissions-wg/) Pilot 2. The data sets and results displayed in the application originate from the [Pilot 1 project](https://rconsortium.github.io/submissions-wg/pilot-overall.html#pilot-1---common-analyses). Below is a brief description of the rest of the application:
-
-## Note on Dynamic Filters
-
-This application enables dynamic filtering of the input datasets used in the Kaplan-Meier (KM) Plot module for TTDE. When one or more filters are applied, the statistical estimates displayed in the visualization will dynamically update. Any statistical analyses utilizing subgroups of the original data sets are deemed **exploratory** and not pre-specified.
 ### Demographic Table
 
 In this interface, summary statistics associated with baseline clinical characteristics and other demographic factors is shown.
@@ -20,3 +16,7 @@ A summary table of the primary efficacy analysis is shown for each of the time p
 ### Efficacy Table
 
 A summary table of an additional efficacy analysis is shown for baseline and week 20. The efficacy variable (Glucose) was analzying using ANCOVA model with treatment and baseline value as covariates, comparing Placebo to Xanomeline High Dose.
+
+### Visit Completion
+
+A summary table of the number of patients remaining in the treatment period for each scheduled visit from baseline to week 24.

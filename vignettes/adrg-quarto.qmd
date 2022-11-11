@@ -302,13 +302,14 @@ The Shiny application included in this pilot follows a different structure than 
 ```{r}
 #| label: pilot2-programs
 pilot2_programs_df <- tibble::tibble(
-  name = c("app.R", "app_teal.R", "tm_t_demographic.R", "tm_g_kmplot.R", "tm_t_primary.R", "tm_t_efficacy.R"),
+  name = c("app.R", "app_teal.R", "tm_t_demographic.R", "tm_g_kmplot.R", "tm_t_primary.R", "tm_t_efficacy.R", "tm_t_disposition.R"),
   purpose = c("Facilitate execution of Shiny application in a local R session or deployed on a server",
               "Assemble the application modules for use with the Teal package",
               "Shiny module for demographic and baseline characteristics analysis",
               "Shiny module for Kaplan-Meier plot of time to first dermatologic event",
               "Shiny module for primary endpoint analysis ADAS Cog (11)",
-              "Shiny module for primary endpoint analysis Glucose (mmol/L)")
+              "Shiny module for primary endpoint analysis Glucose (mmol/L)",
+              "Shiny module for summary of number of patients completing each visit in treatment period")
 )
 
 pilot2_programs_df_kbl <- kbl(
@@ -537,25 +538,23 @@ kbl(
 
 Study datasets and the Shiny application supportive files are organized in accordance to Study Data Technical Conformance Guide.
 
-```
-├── m1
-│   └── us
-│       └── cover-letter.pdf
-└── m5
-    └── datasets
-        └── rconsortiumpilot2
-            └── analysis
-                └── adam
-                    ├── datasets
-                    │   ├── adadas.xpt
-                    │   ├── adlbc.xpt
-                    │   ├── adsl.xpt
-                    │   ├── adtte.xpt
-                    │   ├── define2-0-0.xsl
-                    │   └── define.xml
-                    └── programs
-                        └── r1pkg.txt
-```
+    ├── m1
+    │   └── us
+    │       └── cover-letter.pdf
+    └── m5
+        └── datasets
+            └── rconsortiumpilot2
+                └── analysis
+                    └── adam
+                        ├── datasets
+                        │   ├── adadas.xpt
+                        │   ├── adlbc.xpt
+                        │   ├── adsl.xpt
+                        │   ├── adtte.xpt
+                        │   ├── define2-0-0.xsl
+                        │   └── define.xml
+                        └── programs
+                            └── r1pkg.txt
 
 ```{r}
 #| label: pilot2-dir-structure
@@ -599,8 +598,7 @@ kbl(
   column_spec(3, width = "20em")
 ```
 
-::: {.content-hidden}
-
+::: content-hidden
 # Appendix 1: Instructions to Execute Pilot 1 Analysis Programs in R {.unnumbered}
 
 1.  Install R
@@ -615,7 +613,7 @@ Create a temporary working directory, For example, `C:\tempwork`. Copy all submi
 
 The R packages are based on CRAN at 2021-08-31. To install the exact R package versions used in this project, run the code below to set the snapshot repository.
 
-```r
+``` r
 options(repos = "https://mran.microsoft.com/snapshot/2021-08-31")
 ```
 
@@ -623,7 +621,7 @@ options(repos = "https://mran.microsoft.com/snapshot/2021-08-31")
 
 In the same R session, install the required packages by running the code below.
 
-```r
+``` r
 install.packages(c("haven", "dplyr", "emmeans", "pkglite" , "r2rtf", 
                    "rtables", "ggplot2", "cowplot", "visR", "Tplyr", 
                    "pharmaRTF", "huxtable"))
@@ -633,7 +631,7 @@ install.packages(c("haven", "dplyr", "emmeans", "pkglite" , "r2rtf",
 
 The proprietary R package `pilot1wrappers` is packed in the file `r0pkg.txt`. In the same R session, restore the package structures and install them by running the code below. Adjust the output path as needed to use a writable local directory.
 
-```r
+``` r
 pkglite::unpack("r0pkg.txt", output = ".", install = TRUE)
 ```
 
@@ -649,7 +647,7 @@ OUTPUT path: To save the analysis results, define the path variable
 
 All of these paths must be defined before executing the analysis output program. For example:
 
-```r
+``` r
 path = list(
   # Modify path to the actual location
   adam = "path/to/esub/analysis/adam/datasets",
@@ -667,50 +665,48 @@ To reproduce analysis results, rerun the following four programs:
 -   `tlf-efficacy.r`
 -   `tlf-kmplot.r`
 -   `tlf-primary.r`
-
 :::
 
-
+```{=tex}
 \appendix
 \renewcommand{\thesection}{A}
-
+```
 # Appendix 1: Pilot 2 Shiny Application Installation and Usage {.unnumbered}
 
-To install and execute the Shiny application, follow all of the procedures below. Ensure that you note the location of where you downloaded the Pilot 2 eCTD submission files. For demonstration purposes, the procedures below assume the transfer has been saved to this location: `C:\pilot2`. 
+To install and execute the Shiny application, follow all of the procedures below. Ensure that you note the location of where you downloaded the Pilot 2 eCTD submission files. For demonstration purposes, the procedures below assume the transfer has been saved to this location: `C:\pilot2`.
 
 In addition, create a new directory to hold the unpacked Pilot 2 Shiny application files. For demonstration purposes, the procedures below assume the new directory is this location: `C:\pilot2_files`.
 
 ## Installation of R and Optional Software
 
-Download and install R 4.1.2 for Windows from <https://cran.r-project.org/bin/windows/base/old/4.1.2/R-4.1.2-win.exe>. While optional, It is also recommended to view the Shiny application within the RStudio IDE. You can download RStudio for Windows by visiting <https://www.rstudio.com/products/rstudio/download/#download>. 
+Download and install R 4.1.2 for Windows from <https://cran.r-project.org/bin/windows/base/old/4.1.2/R-4.1.2-win.exe>. While optional, It is also recommended to view the Shiny application within the RStudio IDE. You can download RStudio for Windows by visiting <https://www.rstudio.com/products/rstudio/download/#download>.
 
 ## Installation of R Packages
 
 A minimum set of R packages are required to ensure the Pilot 2 Shiny application files are successfully unpacked and the custom package environment used for the application is replicated correctly. The first packages to install are the `remotes` and `pkglite` packages:
 
-```r
+``` r
 install.packages(c("remotes", "pkglite"))
 
 # install version 0.15.2 of the renv package:
 remotes::install_version("renv", version = "0.15.2")
 ```
 
-:::{.callout-note}
+::: callout-note
 The console may display a warning message about Rtools being required to build R packages. However the packages required by the Shiny application will not require custom compilation involving other languages like C++, hence the Rtools utility is not required for the application.
 :::
 
-
 ## Extract Application Bundle
 
-Use the `pkglite` package to unpack the Shiny application bundle `r1pkg.txt` within the Pilot 2 eCTD submission transfer. This file is located in the following relative path within the eCTD transfer directory: 
+Use the `pkglite` package to unpack the Shiny application bundle `r1pkg.txt` within the Pilot 2 eCTD submission transfer. This file is located in the following relative path within the eCTD transfer directory:
 
-```sh
+``` sh
 m5\datasets\rconsortiumpilot2\analysis\adam\programs\r1pkg.txt
 ```
 
-Enter the following command in the R console to extract the Shiny application files to the destination directory. 
+Enter the following command in the R console to extract the Shiny application files to the destination directory.
 
-```r
+``` r
 pkglite::unpack(
   input = "C:/pilot2/m5/datasets/rconsortiumpilot2/analysis/adam/programs/r1pkg.txt", 
   output = "C:/pilot2_files"
@@ -719,7 +715,7 @@ pkglite::unpack(
 
 The console will display messages of unpacking and writing files to the destination directory. Note that the procedure creates a sub-directory called `pilot2wrappers` in the destination directory. Take note of that particular directory path on your system, as you will use this in the remaining procedures. In this example, the directory is located in the following path:
 
-```sh
+``` sh
 C:\pilot2_files\pilot2wrappers
 ```
 
@@ -727,17 +723,17 @@ C:\pilot2_files\pilot2wrappers
 
 The dependencies for the Shiny application are managed by the `renv` R package management system. To bootstrap the customized R package library used for the Shiny application, launch a new R session in the directory where you unpacked the application source files in the previous step. Use either of the following procedures depending on your R computing environment:
 
-### RStudio 
+### RStudio
 
 Create a new RStudio Project within the `pilot2wrappers` directory:
 
-1. Select `File -> New Project`
-2. In the Create Project dialog box, choose **Existing Directory**
-3. In the Create Project from Existing Directory dialog box, click the **Browse** button and navigate to the `pilot2wrappers` directory. Once the location has been confirmed, click the **Create Project** button.
+1.  Select `File -> New Project`
+2.  In the Create Project dialog box, choose **Existing Directory**
+3.  In the Create Project from Existing Directory dialog box, click the **Browse** button and navigate to the `pilot2wrappers` directory. Once the location has been confirmed, click the **Create Project** button.
 
 RStudio will refresh the window and automatically install the `renv` package into the project directory. To complete the process of restoring the pilot R packages, run the following command in the R console:
 
-```r
+``` r
 renv::restore(prompt = FALSE)
 ```
 
@@ -747,33 +743,32 @@ The package installation procedure may take a few minutes or longer depending on
 
 Launch a new R session in the `pilot2wrappers` directory of the unpacked application directory. By default, the R Gui interface on Windows will launch a new R session in your default Windows home directory (typically the **Documents** folder). Perform the following steps to ensure R is launched in the proper directory.
 
-:::{.callout-note}
+::: callout-note
 The procedure below assumes R 4.1.2 has been installed in a default location. If you are unsure of the full path to the R GUI executable on your system, you can find the location on your system by performing the following steps:
 
-1. Open the Windows Start Menu and expand to show all applications.
-1. Navigate to the R entry and expand the section such that all R program entries are visible. 
-1. Right-click the `R x64 4.1.2` entry and select `More -> Open file location`. 
-1. A new folder window will open with the shortcut `R x64 4.1.2` highlighted. Right-click this entry and select **Properties**
-1. In the Properties window, copy the path specified in the **Target** text field. The portion of the text in quotations gives the full path to the `Rgui.exe` location on your system. 
+1.  Open the Windows Start Menu and expand to show all applications.
+2.  Navigate to the R entry and expand the section such that all R program entries are visible.
+3.  Right-click the `R x64 4.1.2` entry and select `More -> Open file location`.
+4.  A new folder window will open with the shortcut `R x64 4.1.2` highlighted. Right-click this entry and select **Properties**
+5.  In the Properties window, copy the path specified in the **Target** text field. The portion of the text in quotations gives the full path to the `Rgui.exe` location on your system.
 :::
 
+1.  Open the Windows Powershell program by searching for Windows Powershell in the Windows Start menu.
+2.  Change the current directory to the `pilot2wrappers` directory by running the following command (substitute the `pilot2_files` location for your appropriate directory as needed):
 
-1. Open the Windows Powershell program by searching for Windows Powershell in the Windows Start menu.
-2. Change the current directory to the `pilot2wrappers` directory by running the following command (substitute the `pilot2_files` location for your appropriate directory as needed):
-
-```sh
+``` sh
 Set-Location -Path "C:\pilot2_files\pilot2wrappers"
 ```
 
-3. Launch the Windows R GUI in this session by running the following command:
+3.  Launch the Windows R GUI in this session by running the following command:
 
-```sh
+``` sh
 C:\"Program Files"\R\R-4.1.2\bin\x64\Rgui.exe
 ```
 
 The R GUI will launch and automatically install the `renv` package into the project directory. To complete the process of restoring the pilot R packages, run the following command in the R console:
 
-```r
+``` r
 renv::restore(prompt = FALSE)
 ```
 
@@ -781,15 +776,15 @@ The package installation procedure may take a few minutes or longer depending on
 
 ## Update Shiny Application Configuration
 
-The Shiny application needs one configuration update in order to import the ADaM data sets contained in the eCTD transfer. The data files are located in the following relative path within the eCTD transfer directory: 
+The Shiny application needs one configuration update in order to import the ADaM data sets contained in the eCTD transfer. The data files are located in the following relative path within the eCTD transfer directory:
 
-```sh
+``` sh
 m5\datasets\rconsortiumpilot2\analysis\adam\datasets
 ```
 
 Run the following command in the R console (substitute the `pilot2` location for your appropriate directory as needed):
 
-```r
+``` r
 pilot2wrappers::set_data_path("C:/pilot2/m5/datasets/rconsortiumpilot2/analysis/adam/datasets")
 ```
 
@@ -797,46 +792,28 @@ pilot2wrappers::set_data_path("C:/pilot2/m5/datasets/rconsortiumpilot2/analysis/
 
 To run the Shiny application, enter the following command in the R console:
 
-```r
+``` r
 golem:::run_dev()
 ```
-# Appendix 2: Application Usage Guide {.unnumbered}
 
+# Appendix 2: Application Usage Guide {.unnumbered}
 
 The Shiny application contains 5 tabs, with the first table **App Information** selected by default. The relationship between the other application tabs and previously submitted analysis from Pilot 1 are described in the table below:
 
-+-------------------+------------------------------------------------------------------------------------------------+
-| Application Tab   | Pilot 1 Output                                                                                 |
-+===================+================================================================================================+
-| Demographic Table | Table 14-2.01 Summary of Demographic and Baseline Characteristics                              |
-+-------------------+------------------------------------------------------------------------------------------------+
-| KM plot for TTDE  | Figure 14-1 Tiem to Dermatologic Event by Treatment Group                                      |
-+-------------------+------------------------------------------------------------------------------------------------+
-| Primary Table     | Table 14-3.01 Primary Endpoint Analysis: ADAS Cog(11) - Change from Baseline to Week 24 - LOCF |
-+-------------------+------------------------------------------------------------------------------------------------+
-| Efficacy Table    | Table 14-3.02 Primary Endpoint Analysis: Glucose (mmol/L) - Summary at Week 20 - LOCF          |
-+-------------------+------------------------------------------------------------------------------------------------+
++------------------------+------------------------------------------------------------------------------------------------+
+| Application Tab        | Pilot 1 Output                                                                                 |
++========================+================================================================================================+
+| Demographic Table      | Table 14-2.01 Summary of Demographic and Baseline Characteristics                              |
++------------------------+------------------------------------------------------------------------------------------------+
+| KM plot for TTDE       | Figure 14-1 Tiem to Dermatologic Event by Treatment Group                                      |
++------------------------+------------------------------------------------------------------------------------------------+
+| Primary Table          | Table 14-3.01 Primary Endpoint Analysis: ADAS Cog(11) - Change from Baseline to Week 24 - LOCF |
++------------------------+------------------------------------------------------------------------------------------------+
+| Efficacy Table         | Table 14-3.02 Primary Endpoint Analysis: Glucose (mmol/L) - Summary at Week 20 - LOCF          |
++------------------------+------------------------------------------------------------------------------------------------+
+| Visit Completion Table | Not Applicable                                                                                 |
++------------------------+------------------------------------------------------------------------------------------------+
 
 : {tbl-colwidths="\[30,70\]"}
 
-The default display in the analysis tabs match with the outputs submitted in Pilot 1. The Shiny application enables subpopulation analysis using *Filters*. Within any tab, there are three sections related to Filters on the right-hand side of the page: **Active Filter Summary**, **Active Filter Variables**, and **Add Filter Variables**
-
-![](figures/app_screenshot1.png){width="50%"}
-
-Analysis example of performing subpopulation analysis for an age group:
-
-1.  Within the **Add Filter Variables** widget, click the box with the placeholder **Select variables to filter**.
-
-![](figures/app_screenshot2.png){width="50%"}
-
-2.  Scroll up/down or use the search bar to find the variable for subpopulation. Click the desired variable (**AGEYR1** in this example).
-
-![](figures/app_screenshot3.png){width="50%"}
-
-3.  In the **Active Filter Variables** widget, the selected variable with its available categories or levels will display. In this example, **AGEYR1** in this example) is displayed with three categories. If the selected variable in the previous step is a continuous variable, then a slider will appear for selecting a range of values.
-
-![](figures/app_screenshot4.png){width="50%"}
-
-4.  Select the target subpopulation (e.g. `>80`) and the analysis output displayed on the left hand side will be updated in real-time according to the selection, which in this example is equivalent to performing a filter on the **ADSL** data by `AGEGR1 == '>80'`.
-
-5.  In the Shiny application, the filters are considered as global and shared across the remaining analysis tabs. In this example, `AGEGR1 == '>80'` will be applied in other analysis tabs automatically, hence it is not necessary to manually perform the same filtering operation on the remaining tabs.
+The default display in the analysis tabs match with the outputs submitted in Pilot 1, as well as an additional table on visit completion.

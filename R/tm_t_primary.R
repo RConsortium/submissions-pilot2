@@ -55,8 +55,8 @@ srv_t_primary <- function(input, output, session, datasets) {
       nest_rowlabels() %>%
       dplyr::select(-starts_with('ord')) %>%
       add_column_headers(
-        paste0("|Placebo</br>(N=**Placebo**)| Xanomeline Low Dose</br>(N=**Xanomeline Low Dose**) ",
-               "| Xanomeline High Dose</br>(N=**Xanomeline High Dose**)"),
+        paste0("|Placebo</br>(N=**Placebo**)| Xanomeline High Dose</br>(N=**Xanomeline High Dose**) ",
+               "| Xanomeline Low Dose</br>(N=**Xanomeline Low Dose**)"),
         header_n(t)
       )
 

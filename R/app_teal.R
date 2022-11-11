@@ -61,6 +61,12 @@ create_teal <- function() {
         ui = ui_t_efficacy,
         server = srv_t_efficacy,
         filters = NULL
+      ),
+      module(
+        label = "Visit Completion Table",
+        ui = ui_t_disposition,
+        server = srv_t_disposition,
+        filters = NULL
       )
       
     ),

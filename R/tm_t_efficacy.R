@@ -50,7 +50,7 @@ ui_t_efficacy <- function(id, datasets) {
     tags$hr(),
     fluidRow(
       h6(tags$i("Abbreviations: CI=Confidence Interval; LS=Least Squares; SD=Standard Deviation")),
-      h6(tags$p("Statistical model and comparison p-values removed when applying data filters. Refer to the application information for additional details."))
+      h6(tags$p("Based on an Analysis of Covariance (ANCOVA) model with treatment and baseline value as covariates"))
     )
   )
 }
@@ -89,7 +89,7 @@ srv_t_efficacy <- function(input, output, session, datasets) {
     apr0ancova1 <- merge(t11, t12) %>%
       mutate(emmean_sd = SE * sqrt(df)) %>%
       mutate(
-        Trt = c("Study Drug", "Placebo"),
+        Trt = c("Xanomeline High Dose", "Placebo"),
         N1 = N,
         Mean1 = fmt_est(mean_bl, sd_bl),
         N2 = N,
