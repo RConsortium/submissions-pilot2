@@ -1,5 +1,10 @@
 # pilot2wrappers 0.7.0
 
+- Include analysis model specification as a footnote in the efficacy table (#55)
+- Add new frequency table of visit completion by treatment group (#53)
+- Revise title for efficacy table (#52)
+- Fix incorrect header order for primary table (#51)
+- Ensure decimal places for rounding numeric results in demographics table is consistent with Pilot 1 programming (#54)
 # pilot2wrappers 0.6.0
 
 - Remove Teal filters for every module except KM-plot to address FDA reviewer feedback
