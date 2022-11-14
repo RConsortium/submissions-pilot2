@@ -10,11 +10,8 @@
 ui_t_disposition <- function(id, datasets) {
   ns <- NS(id)
   tagList(
-    uiOutput(ns("table"))
-    # p("Statistical model and comparison p-values removed when applying data filters. Refer to the application information for additional details."),
-    # p("[1] Based on Analysis of covariance (ANCOVA) model with treatment and site group as factors and baseline value as a covariate."),
-    # p("[2] Test for a non-zero coefficient for treatment (dose) as a continuous variable."),
-    # p("[3] Pairwise comparison with treatment as a categorical variable: p-values without adjustment for multiple comparisons.")
+    uiOutput(ns("table")),
+    p("Table is based on participants within the ITT population")
   )
 }
 
@@ -31,32 +28,28 @@ srv_t_disposition <- function(input, output, session, datasets) {
     adsl <- ADSL_FILTERED
     adlb <- ADLB_FILTERED
     
-    ## -----------------------------------------------------------------------------------------------------------------------------------
-    visit_long <- adsl %>%
-      filter(SAFFL == "Y") %>%
-      select(USUBJID, TRT01P, VISNUMEN) %>%
-      mutate(VIS_LONG = purrr::map2(USUBJID, VISNUMEN, ~{
-        # create tibble with full visit records 
-        # filter for records less than supplied VISNUMEN
-        df <- tibble::tibble(
-          VISITNUM = c(3, 4, 5, 7, 8, 9, 10, 11, 12)
-        ) %>%
-        mutate(VALUE = 1) %>%
-        filter(VISITNUM <= .y)
-        return(df)
-      })) %>%
-      tidyr::unnest(cols = VIS_LONG)
-
+    # use adlbc data set to remain consistent with efficacy table input data
+    visit_df <- adlbc %>%
+      filter(PARAMCD == "GLUC") %>% 
+      filter(AVISITN != 98) %>%
+      filter(!is.na(AVISITN)) %>%
+      select(USUBJID, AVISITN) %>%
+      distinct() %>%
+      left_join(
+        select(adsl, USUBJID, TRT01P),
+        by = "USUBJID"
+      )
+    
     # visit number and week lookup
     v_week_df <- tibble::tibble(
-      VISITNUM = c(3, 4, 5, 7, 8, 9, 10, 11, 12),
-      VISIT = c("Baseline ", paste("Week", c(2, 4, 6, 8, 12, 16, 20, 24)))
+      AVISITN = c(0, 2, 4, 6, 8, 12, 16, 20, 24, 26, 99),
+      VISIT = c("Baseline ", paste("Week", c(2, 4, 6, 8, 12, 16, 20, 24, 26)), "End of Treatment")
     )%>%
-      mutate(VISIT = factor(VISIT, levels = c("Baseline ", paste("Week", c(2, 4, 6, 8, 12, 16, 20, 24)))))
-
+      mutate(VISIT = factor(VISIT, levels = c("Baseline ", paste("Week", c(2, 4, 6, 8, 12, 16, 20, 24, 26)), "End of Treatment")))
+    
     # build Tplyr table
-    t_visit <- visit_long %>%
-      left_join(v_week_df, by = "VISITNUM") %>%
+    t_visit <- visit_df %>%
+      left_join(v_week_df, by = "AVISITN") %>%
       tplyr_table(TRT01P) %>%
       set_pop_data(adsl) %>%
       set_pop_treat_var(TRT01P) %>%
