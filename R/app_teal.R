@@ -19,7 +19,7 @@ create_teal <- function() {
   adtte <- haven::read_xpt(file.path(adam_path, "adtte.xpt")) %>%
     dplyr::filter(PARAMCD == "TTDE")
   adlb <- haven::read_xpt(file.path(adam_path, "adlbc.xpt")) %>%
-    subset(TRTPN %in% c(0, 81) & PARAMCD == "GLUC" & !is.na(AVISITN)) %>%
+    subset(PARAMCD == "GLUC" & !is.na(AVISITN)) %>%
     dplyr::mutate(TRTPN = ifelse(TRTPN == 0, 99, TRTPN)) # change treatment order for pairwise comparison
   
   app <- teal::init(

@@ -73,6 +73,7 @@ srv_t_efficacy <- function(input, output, session, datasets) {
     
     # prepare labs data for pairwise comparison
     adlb1 <- adlb %>%
+      filter(TRTPN %in% c(99, 81)) %>%
       right_join(itt, by = c("STUDYID", "USUBJID")) %>%
       filter(TRTPN %in% c(99, 81), PARAMCD == "GLUC", !is.na(AVISITN)) %>%
       mutate(TRTPN = ifelse(TRTPN == 0, 99, TRTPN)) 
