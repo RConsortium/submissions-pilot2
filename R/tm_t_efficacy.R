@@ -19,7 +19,6 @@ ui_t_efficacy <- function(id, datasets) {
       tippy::tippy(
         h4("Primary Endpoint Analysis: Glucose (mmol/L) - Summary at Week 20 LOCF"),
         tooltip = tooltip_text("Table is based on participants who have observable data at Baseline and Week 20", 16),
-        #tooltip = "<span style='font-size:18px;'>Table is based on participants who have observable data at Baseline and Week 20<span>",
         allowHTML = TRUE
       ),
       tags$br(),tags$br(),
@@ -50,6 +49,7 @@ ui_t_efficacy <- function(id, datasets) {
     tags$hr(),
     fluidRow(
       h6(tags$i("Abbreviations: CI=Confidence Interval; LS=Least Squares; SD=Standard Deviation")),
+      h6(tags$p("Table is based on participants who had observable data at Baseline and Week 20")),
       h6(tags$p("Based on an Analysis of Covariance (ANCOVA) model with treatment and baseline value as covariates"))
     )
   )
@@ -60,22 +60,43 @@ ui_t_efficacy <- function(id, datasets) {
 #' @noRd
 #' @importFrom shiny reactive 
 #' @importFrom reactable reactable renderReactable colGroup colDef
-#' @importFrom dplyr filter group_by summarise mutate select n
+#' @importFrom dplyr filter group_by summarise mutate select n filter
 srv_t_efficacy <- function(input, output, session, datasets) {
   efficacy_results <- reactive({
+    adsl <- datasets$get_data("ADSL", filtered = TRUE)
+    
+    itt <- adsl %>%
+      filter(ITTFL == "Y") %>%
+      select("STUDYID", "USUBJID")
+    
     adlb <- datasets$get_data("ADLB", filtered = TRUE)
-    gluc_lmfit <- adlb %>%
+    
+    # prepare labs data for pairwise comparison
+    adlb1 <- adlb %>%
+      filter(TRTPN %in% c(99, 81)) %>%
+      right_join(itt, by = c("STUDYID", "USUBJID")) %>%
+      filter(TRTPN %in% c(99, 81), PARAMCD == "GLUC", !is.na(AVISITN)) %>%
+      mutate(TRTPN = ifelse(TRTPN == 0, 99, TRTPN)) 
+    
+    gluc_lmfit <- adlb1 %>%
       filter(AVISITN == 20) %>%
       lm(CHG ~ BASE + TRTPN, data = .)
     
-    ## Raw summary statistics
-    t11 <- adlb %>%
-      filter(AVISITN == 20) %>%
+    t10 <- adlb1 %>%
+      filter(AVISITN == 0) %>%
       group_by(TRTPN, TRTP) %>%
       summarise(
         N = n(),
         mean_bl = mean(BASE),
-        sd_bl = sd(BASE),
+        sd_bl = sd(BASE)
+      )
+    
+    ## Raw summary statistics
+    t11 <- adlb1 %>%
+      filter(AVISITN == 20, !is.na(CHG), !is.na(BASE)) %>%
+      group_by(TRTPN, TRTP) %>%
+      summarise(
+        N_20 = n(),
         mean_chg = mean(CHG),
         sd_chg = sd(CHG),
         mean = mean(AVAL),
@@ -86,15 +107,16 @@ srv_t_efficacy <- function(input, output, session, datasets) {
     t12 <- emmeans::emmeans(gluc_lmfit, "TRTPN")
     
     ## Merge and format data for reporting
-    apr0ancova1 <- merge(t11, t12) %>%
+    apr0ancova1 <- merge(t10, t11) %>%
+      merge(t12) %>%
       mutate(emmean_sd = SE * sqrt(df)) %>%
       mutate(
         Trt = c("Xanomeline High Dose", "Placebo"),
         N1 = N,
         Mean1 = fmt_est(mean_bl, sd_bl),
-        N2 = N,
+        N2 = N_20,
         Mean2 = fmt_est(mean, sd),
-        N3 = N,
+        N3 = N_20,
         Mean3 = fmt_est(mean_chg, sd_chg),
         CI = fmt_ci(emmean, lower.CL, upper.CL)
       ) %>%

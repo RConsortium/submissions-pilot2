@@ -1,7 +1,7 @@
 Package: pilot2wrappers
 Type: Package
 Title: R Consortium R Submission Pilot 2
-Version: 0.7.0
+Version: 0.8.0
 Authors@R: c(
         person("Eric", "Nantz", email = "theRcast@gmail.com", role = c("aut", "cre")),
         person("Yilong", "Zhang", role = c("aut")),

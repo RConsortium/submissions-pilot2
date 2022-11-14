@@ -2,7 +2,7 @@
 title: "Analysis Data Reviewer's Guide"
 author: "R Consortium"
 subtitle: "R Consortium R Submission Pilot 2"
-date: "2022-09-26"
+date: "2022-11-14"
 format: 
   pdf:
     number-sections: true
@@ -134,7 +134,7 @@ Not applicable
 
 ## Overview
 
-The analysis codes and outputs submitted in Pilot 1 and the Shiny application modules in Pilot 2 cover part of the efficacy and safety objectives of the initial protocol. More specifically, 4 analysis outputs are included, covering demographics analysis, primary efficacy endpoint analysis, and safety analysis.
+The analysis codes and outputs submitted in Pilot 1 and the Shiny application modules in Pilot 2 cover part of the efficacy and safety objectives of the initial protocol. More specifically, 5 analysis outputs are included, covering demographics analysis, primary efficacy endpoint analysis, safety analysis, and visit completion.
 
 ## Analysis Datasets
 
@@ -373,7 +373,7 @@ pilot1_programs_df_kbl %>%
 prop_pkgs <- tibble::tibble(
   package = "pilot2wrappers",
   title = "A Shiny application for executing interactive displays and analyses.",
-  version = "0.1.0"
+  version = desc::desc_get_version()
 )
 
 kbl(
@@ -817,3 +817,12 @@ The Shiny application contains 5 tabs, with the first table **App Information** 
 : {tbl-colwidths="\[30,70\]"}
 
 The default display in the analysis tabs match with the outputs submitted in Pilot 1, as well as an additional table on visit completion.
+
+The **KM plot for TTE** module allows for filters to be applied based on variables in the **ADSL** and **ADTTE** data sets. Below is an example of performing subpopulation analysis for an age group within the module:
+1.  Within the **Add Filter Variables** widget, click the box with the placeholder **Select variables to filter**.
+![](figures/app_screenshot2.png){width="50%"}
+2.  Scroll up/down or use the search bar to find the variable for subpopulation. Click the desired variable (**AGEYR1** in this example).
+![](figures/app_screenshot3.png){width="50%"}
+3.  In the **Active Filter Variables** widget, the selected variable with its available categories or levels will display. In this example, **AGEYR1** in this example) is displayed with three categories. If the selected variable in the previous step is a continuous variable, then a slider will appear for selecting a range of values.
+![](figures/app_screenshot4.png){width="50%"}
+4.  Select the target subpopulation (e.g. `>80`) and the analysis output displayed on the left hand side will be updated in real-time according to the selection, which in this example is equivalent to performing a filter on the **ADSL** data by `AGEGR1 == '>80'`.
