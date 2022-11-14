@@ -26,7 +26,7 @@ srv_t_disposition <- function(input, output, session, datasets) {
     ADSL_FILTERED <- datasets$get_data("ADSL", filtered = TRUE)
     ADLB_FILTERED <- datasets$get_data("ADLB", filtered = TRUE)
     adsl <- ADSL_FILTERED
-    adlb <- ADLB_FILTERED
+    adlbc <- ADLB_FILTERED
     
     # use adlbc data set to remain consistent with efficacy table input data
     visit_df <- adlbc %>%
