@@ -1,3 +1,9 @@
+# pilot2wrappers 0.8.0
+
+- Switch to `adlbc` as source for visit completion to remain consistent with efficacy analysis
+- Fix incorrect sample sizes for baseline visit in primary analysis table
+- Fix misc typos for ADRG
+
 # pilot2wrappers 0.7.0
 
 - Include analysis model specification as a footnote in the efficacy table (#55)
@@ -5,11 +11,13 @@
 - Revise title for efficacy table (#52)
 - Fix incorrect header order for primary table (#51)
 - Ensure decimal places for rounding numeric results in demographics table is consistent with Pilot 1 programming (#54)
+
 # pilot2wrappers 0.6.0
 
 - Remove Teal filters for every module except KM-plot to address FDA reviewer feedback
 - Increase risk table and plot label font sizes
 - Add bootstrap alert box with subgroup disclaimer in KM-plot module
+
 # pilot2wrappers 0.5.0
 
 - Hide p-values when a data filter is applied, and display only when no filters are applied. This addresses comments from FDA reviewers after they saw a preview of the application.
