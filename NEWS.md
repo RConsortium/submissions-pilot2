@@ -1,3 +1,7 @@
+# pilot2wrappers 0.9.0
+
+- Fix RMSE calculation in efficacy table to match result in Pilot 1
+
 # pilot2wrappers 0.8.0
 
 - Switch to `adlbc` as source for visit completion to remain consistent with efficacy analysis

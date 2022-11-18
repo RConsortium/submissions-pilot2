@@ -50,7 +50,7 @@ Content:
   Package: pilot2wrappers
   Type: Package
   Title: R Consortium R Submission Pilot 2
-  Version: 0.8.0
+  Version: 0.9.0
   Authors@R: c(
           person("Eric", "Nantz", email = "theRcast@gmail.com", role = c("aut", "cre")),
           person("Yilong", "Zhang", role = c("aut")),
@@ -178,6 +178,10 @@ Package: pilot2wrappers
 File: NEWS.md
 Format: text
 Content:
+  # pilot2wrappers 0.9.0
+  
+  - Fix RMSE calculation in efficacy table to match result in Pilot 1
+  
   # pilot2wrappers 0.8.0
   
   - Switch to `adlbc` as source for visit completion to remain consistent with efficacy analysis
@@ -302,7 +306,7 @@ Format: text
 Content:
   default:
     golem_name: pilot2wrappers
-    golem_version: 0.8.0
+    golem_version: 0.9.0
     app_prod: no
     adam_path: "datasets/adam"
   production:
@@ -518,8 +522,7 @@ Content:
     adtte <- haven::read_xpt(file.path(adam_path, "adtte.xpt")) %>%
       dplyr::filter(PARAMCD == "TTDE")
     adlb <- haven::read_xpt(file.path(adam_path, "adlbc.xpt")) %>%
-      subset(PARAMCD == "GLUC" & !is.na(AVISITN)) %>%
-      dplyr::mutate(TRTPN = ifelse(TRTPN == 0, 99, TRTPN)) # change treatment order for pairwise comparison
+      filter(PARAMCD == "GLUC" & !is.na(AVISITN))
     
     app <- teal::init(
       data = teal.data::cdisc_data(
@@ -1439,9 +1442,8 @@ Content:
       
       # prepare labs data for pairwise comparison
       adlb1 <- adlb %>%
-        filter(TRTPN %in% c(99, 81)) %>%
         right_join(itt, by = c("STUDYID", "USUBJID")) %>%
-        filter(TRTPN %in% c(99, 81), PARAMCD == "GLUC", !is.na(AVISITN)) %>%
+        filter(TRTPN %in% c(0, 81), PARAMCD == "GLUC", !is.na(AVISITN)) %>%
         mutate(TRTPN = ifelse(TRTPN == 0, 99, TRTPN)) 
       
       gluc_lmfit <- adlb1 %>%
@@ -1509,7 +1511,7 @@ Content:
       ### Calculate root mean square and save data in output folder
       apr0ancova3 <- data.frame(rmse = paste0(
         "Root Mean Squared Error of Change = ",
-        formatC(sd(gluc_lmfit$residuals), digits = 2, format = "f", flag = "0")
+        formatC(sqrt(mean((gluc_lmfit$residuals)^2)), digits = 2, format = "f", flag = "0")
       ))
       list(
         apr0ancova1 = apr0ancova1,

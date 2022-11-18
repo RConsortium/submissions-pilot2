@@ -73,9 +73,8 @@ srv_t_efficacy <- function(input, output, session, datasets) {
     
     # prepare labs data for pairwise comparison
     adlb1 <- adlb %>%
-      filter(TRTPN %in% c(99, 81)) %>%
       right_join(itt, by = c("STUDYID", "USUBJID")) %>%
-      filter(TRTPN %in% c(99, 81), PARAMCD == "GLUC", !is.na(AVISITN)) %>%
+      filter(TRTPN %in% c(0, 81), PARAMCD == "GLUC", !is.na(AVISITN)) %>%
       mutate(TRTPN = ifelse(TRTPN == 0, 99, TRTPN)) 
     
     gluc_lmfit <- adlb1 %>%
@@ -143,7 +142,7 @@ srv_t_efficacy <- function(input, output, session, datasets) {
     ### Calculate root mean square and save data in output folder
     apr0ancova3 <- data.frame(rmse = paste0(
       "Root Mean Squared Error of Change = ",
-      formatC(sd(gluc_lmfit$residuals), digits = 2, format = "f", flag = "0")
+      formatC(sqrt(mean((gluc_lmfit$residuals)^2)), digits = 2, format = "f", flag = "0")
     ))
     list(
       apr0ancova1 = apr0ancova1,
