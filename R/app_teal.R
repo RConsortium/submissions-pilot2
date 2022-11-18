@@ -19,8 +19,7 @@ create_teal <- function() {
   adtte <- haven::read_xpt(file.path(adam_path, "adtte.xpt")) %>%
     dplyr::filter(PARAMCD == "TTDE")
   adlb <- haven::read_xpt(file.path(adam_path, "adlbc.xpt")) %>%
-    subset(PARAMCD == "GLUC" & !is.na(AVISITN)) %>%
-    dplyr::mutate(TRTPN = ifelse(TRTPN == 0, 99, TRTPN)) # change treatment order for pairwise comparison
+    filter(PARAMCD == "GLUC" & !is.na(AVISITN))
   
   app <- teal::init(
     data = teal.data::cdisc_data(
