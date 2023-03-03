@@ -63,13 +63,13 @@ ui_t_efficacy <- function(id, datasets) {
 #' @importFrom dplyr filter group_by summarise mutate select n filter
 srv_t_efficacy <- function(input, output, session, datasets) {
   efficacy_results <- reactive({
-    adsl <- datasets$get_data("ADSL", filtered = TRUE)
+    adsl <- datasets$get_data("ADSL", filtered = FALSE)
     
     itt <- adsl %>%
       filter(ITTFL == "Y") %>%
       select("STUDYID", "USUBJID")
     
-    adlb <- datasets$get_data("ADLB", filtered = TRUE)
+    adlb <- datasets$get_data("ADLB", filtered = FALSE)
     
     # prepare labs data for pairwise comparison
     adlb1 <- adlb %>%

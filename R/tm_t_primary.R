@@ -25,8 +25,8 @@ ui_t_primary <- function(id, datasets) {
 #' @import Tplyr
 srv_t_primary <- function(input, output, session, datasets) {
   output$table <- renderUI({
-    ADSL_FILTERED <- datasets$get_data("ADSL", filtered = TRUE)
-    ADAS_FILTERED <- datasets$get_data("ADAS", filtered = TRUE)
+    ADSL_FILTERED <- datasets$get_data("ADSL", filtered = FALSE)
+    ADAS_FILTERED <- datasets$get_data("ADAS", filtered = FALSE)
     adas <- ADAS_FILTERED
 
     ## -----------------------------------------------------------------------------------------------------------------------------------
