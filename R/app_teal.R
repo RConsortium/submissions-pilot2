@@ -17,7 +17,8 @@ create_teal <- function() {
       ANL01FL == 'Y'
     )
   adtte <- haven::read_xpt(file.path(adam_path, "adtte.xpt")) %>%
-    dplyr::filter(PARAMCD == "TTDE")
+    dplyr::filter(PARAMCD == "TTDE") %>%
+    select(., -TRTDUR, -TRTP, -TRTA, -TRTAN)
   adlb <- haven::read_xpt(file.path(adam_path, "adlbc.xpt")) %>%
     filter(PARAMCD == "GLUC" & !is.na(AVISITN))
   
