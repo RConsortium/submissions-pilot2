@@ -2,7 +2,7 @@
 title: "Analysis Data Reviewer's Guide"
 author: "R Consortium"
 subtitle: "R Consortium R Submission Pilot 2"
-date: "2022-11-14"
+date: "2023-04-10"
 format: 
   pdf:
     number-sections: true
@@ -34,7 +34,7 @@ library(magrittr)
 
 ## Purpose
 
-The Analysis Data Reviewer's Guide (ADRG) provides specific instructions for executing a Shiny application created with the R-language for viewing analysis results and performing custom subpopulation analysis based on the data sets and analytical methods used in the [R Consortium R Submission Pilot 1](https://github.com/RConsortium/submissions-pilot1-to-fda). This document provides context for the analysis datasets and terminology that benefit from additional explanation beyond the Data Definition document (define.xml), as well as a summary of ADaM conformance findings. Appendix 1 provides detailed procedures for installing and configuring a local R environment to view the included Shiny application. The recommended steps to execute the Shiny application are described in Appendix 2.
+The Analysis Data Reviewer's Guide (ADRG) provides specific instructions for executing a Shiny application created with the R-language for viewing analysis results and performing custom subpopulation analysis based on the data sets and analytical methods used in the [R Consortium R Submission Pilot 1](https://github.com/RConsortium/submissions-pilot1-to-fda). This document provides context for the analysis datasets and terminology that benefit from additional explanation beyond the Data Definition document (define.xml), as well as a summary of ADaM conformance findings. @sec-a1 provides detailed procedures for installing and configuring a local R environment to view the included Shiny application.
 
 ## Study Data Standards and Dictionary Inventory
 
@@ -671,7 +671,7 @@ To reproduce analysis results, rerun the following four programs:
 \appendix
 \renewcommand{\thesection}{A}
 ```
-# Appendix 1: Pilot 2 Shiny Application Installation and Usage {.unnumbered}
+# Appendix 1: Pilot 2 Shiny Application Installation and Usage {#sec-a1}
 
 To install and execute the Shiny application, follow all of the procedures below. Ensure that you note the location of where you downloaded the Pilot 2 eCTD submission files. For demonstration purposes, the procedures below assume the transfer has been saved to this location: `C:\pilot2`.
 
@@ -721,9 +721,9 @@ C:\pilot2_files\pilot2wrappers
 
 ## Initialize R Package Environment for Shiny Application
 
-The dependencies for the Shiny application are managed by the `renv` R package management system. To bootstrap the customized R package library used for the Shiny application, launch a new R session in the directory where you unpacked the application source files in the previous step. Use either of the following procedures depending on your R computing environment:
+The dependencies for the Shiny application are managed by the `renv` R package management system. To bootstrap the customized R package library used for the Shiny application, launch a new R session in the directory where you unpacked the application source files in the previous step. **Choose one of the following options** depending on your R computing environment and preference:
 
-### RStudio
+### Option 1: RStudio {.unnumbered}
 
 Create a new RStudio Project within the `pilot2wrappers` directory:
 
@@ -739,7 +739,7 @@ renv::restore(prompt = FALSE)
 
 The package installation procedure may take a few minutes or longer depending on internet bandwidth.
 
-### R Console
+### Option 2: R Console {.unnumbered}
 
 Launch a new R session in the `pilot2wrappers` directory of the unpacked application directory. By default, the R Gui interface on Windows will launch a new R session in your default Windows home directory (typically the **Documents** folder). Perform the following steps to ensure R is launched in the proper directory.
 
@@ -805,7 +805,7 @@ The Shiny application contains 5 tabs, with the first table **App Information** 
 +========================+================================================================================================+
 | Demographic Table      | Table 14-2.01 Summary of Demographic and Baseline Characteristics                              |
 +------------------------+------------------------------------------------------------------------------------------------+
-| KM plot for TTDE       | Figure 14-1 Tiem to Dermatologic Event by Treatment Group                                      |
+| KM plot for TTDE       | Figure 14-1 Time to Dermatologic Event by Treatment Group                                      |
 +------------------------+------------------------------------------------------------------------------------------------+
 | Primary Table          | Table 14-3.01 Primary Endpoint Analysis: ADAS Cog(11) - Change from Baseline to Week 24 - LOCF |
 +------------------------+------------------------------------------------------------------------------------------------+
@@ -818,7 +818,7 @@ The Shiny application contains 5 tabs, with the first table **App Information** 
 
 The default display in the analysis tabs match with the outputs submitted in Pilot 1, as well as an additional table on visit completion.
 
-The **KM plot for TTE** module allows for filters to be applied based on variables in the **ADSL** and **ADTTE** data sets. Below is an example of performing subpopulation analysis for an age group within the module:
+The **KM plot for TTDE** module allows for filters to be applied based on variables in the **ADSL** and **ADTTE** data sets. Below is an example of performing subpopulation analysis for an age group within the module:
 1.  Within the **Add Filter Variables** widget, click the box with the placeholder **Select variables to filter**.
 ![](figures/app_screenshot2.png){width="50%"}
 2.  Scroll up/down or use the search bar to find the variable for subpopulation. Click the desired variable (**AGEYR1** in this example).
