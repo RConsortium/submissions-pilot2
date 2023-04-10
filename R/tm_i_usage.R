@@ -24,7 +24,7 @@ ui_i_usage <- function(id, datasets) {
       column(
         width = 12,
         tags$h2("Dynamic Filters"),
-        tags$p("The", tags$b("KM Plot for TTE"), "module allows for filters to be applied based on variables in the", tags$b("ADSL"), "and", tags$b("ADTTE"), "data sets. Below is an example of performing subpopulation analysis for an age group within the module:"),
+        tags$p("The", tags$b("KM Plot for TTDE"), "module allows for filters to be applied based on variables in the", tags$b("ADSL"), "and", tags$b("ADTTE"), "data sets. Below is an example of performing subpopulation analysis for an age group within the module:"),
         tags$br(),
         tabsetPanel(
           type = "tabs",
