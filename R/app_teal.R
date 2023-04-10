@@ -38,6 +38,12 @@ create_teal <- function() {
         filters = NULL
       ),
       module(
+        label = "Usage Guide",
+        ui = ui_i_usage,
+        server = srv_i_usage,
+        filters = NULL
+      ),
+      module(
         label = "Demographic Table",
         ui = ui_t_demographic,
         server = srv_t_demographic,

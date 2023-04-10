@@ -61,7 +61,7 @@ srv_g_kmplot <- function(input, output, session, datasets) {
                      legend_position = "bottom" ) %>%
       visR::add_CNSR() %>%
       visR::add_CI() 
-
+    
     KM <- KM +
       ggplot2::theme(axis.text = element_text(size = rel(1.3)),
                      axis.title = element_text(size = rel(1.4)),
@@ -71,7 +71,6 @@ srv_g_kmplot <- function(input, output, session, datasets) {
 
     KM <- KM %>%
       add_risktable2(group = "statlist")
-      #visR::add_risktable(group = "statlist")
 
     title <- cowplot::ggdraw() +
       cowplot::draw_label(
