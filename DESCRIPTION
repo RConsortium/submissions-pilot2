@@ -1,7 +1,7 @@
 Package: pilot2wrappers
 Type: Package
 Title: R Consortium R Submission Pilot 2
-Version: 0.9.0
+Version: 0.10.0
 Authors@R: c(
         person("Eric", "Nantz", email = "theRcast@gmail.com", role = c("aut", "cre")),
         person("Yilong", "Zhang", role = c("aut")),
@@ -11,7 +11,8 @@ Authors@R: c(
         person("Ning", "Leng", role = c("aut")),
         person("copyright", role = c("cph"))
        )
-Description: Insert Package Description. 
+Description: Shiny application used within the R Consortium R Submissions
+    Working Group Pilot submissions.
 Depends: R (>= 4.1.0)
 License: GPL (>= 3)
 Imports: 
@@ -40,7 +41,8 @@ Imports:
     pkgload,
     tippy,
     markdown,
-    purrr
+    purrr,
+    shinyWidgets
 Suggests: 
     devtools,
     testthat,

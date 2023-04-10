@@ -10,6 +10,8 @@ utils::globalVariables(
     "emmean", "lower.CL", "upper.CL", "Trt",
     "CI", "estimate", "lower", "upper", "p.value",
     "comp", "SAFFL", "STUDYID", "USUBJID", "TRT01A",
-    "AVAL", "CNSR", "PARAM", "PARAMCD", "anl"
+    "AVAL", "CNSR", "PARAM", "PARAMCD", "anl", "TRTDUR", "TRTA", "TRTAN", "VISIT", "distinct_n",
+    "distinct_pct", "var1_Placebo", "var1_Xanomeline High Dose", "var1_Xanomeline Low Dose",
+    "var1_Total", "N_20", "y_values", "time"
   )
 )
