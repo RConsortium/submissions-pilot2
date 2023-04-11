@@ -11,7 +11,14 @@ ui_g_kmplot <- function(id, datasets) {
   ns <- NS(id)
   tagList(
     shinyWidgets::alert(
-      tagList(tags$b("Important Information:"), tags$p("The analyses performed when utilizing subgroups or other subsets of the source data sets are considered ", tags$b("exploratory."))),
+      tagList(
+        tags$b("Important Information:"), 
+        tags$p("The analyses performed when utilizing subgroups or other subsets of the source data sets are considered ", tags$b("exploratory.")),
+        tags$ul(
+          tags$li("Treatment information variables from the", tags$b("ADTTE"), "data set are excluded from the variable list. Use the treatment variables present in the", tags$b("ADSL"), "set to perform treatment-related filters."),
+          tags$li("In rare situations, applying filters with variables from both", tags$b("ADSL"), "and", tags$b("ADTTE"), "that overlap in content could result in an invalid data subset. When possible, select variables with distinct content.")
+        )
+      ),
       status = "info",
       dismissible = TRUE
     ),
@@ -61,7 +68,7 @@ srv_g_kmplot <- function(input, output, session, datasets) {
                      legend_position = "bottom" ) %>%
       visR::add_CNSR() %>%
       visR::add_CI() 
-
+    
     KM <- KM +
       ggplot2::theme(axis.text = element_text(size = rel(1.3)),
                      axis.title = element_text(size = rel(1.4)),
@@ -71,7 +78,6 @@ srv_g_kmplot <- function(input, output, session, datasets) {
 
     KM <- KM %>%
       add_risktable2(group = "statlist")
-      #visR::add_risktable(group = "statlist")
 
     title <- cowplot::ggdraw() +
       cowplot::draw_label(

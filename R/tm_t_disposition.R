@@ -23,8 +23,8 @@ ui_t_disposition <- function(id, datasets) {
 #' @import dplyr
 srv_t_disposition <- function(input, output, session, datasets) {
   output$table <- renderUI({
-    ADSL_FILTERED <- datasets$get_data("ADSL", filtered = TRUE)
-    ADLB_FILTERED <- datasets$get_data("ADLB", filtered = TRUE)
+    ADSL_FILTERED <- datasets$get_data("ADSL", filtered = FALSE)
+    ADLB_FILTERED <- datasets$get_data("ADLB", filtered = FALSE)
     adsl <- ADSL_FILTERED
     adlbc <- ADLB_FILTERED
     

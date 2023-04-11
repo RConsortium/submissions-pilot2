@@ -17,7 +17,8 @@ create_teal <- function() {
       ANL01FL == 'Y'
     )
   adtte <- haven::read_xpt(file.path(adam_path, "adtte.xpt")) %>%
-    dplyr::filter(PARAMCD == "TTDE")
+    dplyr::filter(PARAMCD == "TTDE") %>%
+    select(., -TRTDUR, -TRTP, -TRTA, -TRTAN)
   adlb <- haven::read_xpt(file.path(adam_path, "adlbc.xpt")) %>%
     filter(PARAMCD == "GLUC" & !is.na(AVISITN))
   
@@ -35,6 +36,12 @@ create_teal <- function() {
         ui = function(id, ...) {
           shiny::includeMarkdown(app_sys("app", "docs", "about.md"))
         },
+        filters = NULL
+      ),
+      module(
+        label = "Usage Guide",
+        ui = ui_i_usage,
+        server = srv_i_usage,
         filters = NULL
       ),
       module(

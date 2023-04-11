@@ -6,7 +6,7 @@
 \alias{pilot2wrappers-package}
 \title{pilot2wrappers: R Consortium R Submission Pilot 2}
 \description{
-Insert Package Description.
+Shiny application used within the R Consortium R Submissions Working Group Pilot submissions.
 }
 \author{
 \strong{Maintainer}: Eric Nantz \email{theRcast@gmail.com}

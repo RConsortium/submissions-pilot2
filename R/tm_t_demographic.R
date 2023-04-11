@@ -20,7 +20,7 @@
  #' @import rtables
  srv_t_demographic <- function(input, output, session, datasets) {
    output$table <- renderUI({
-     ADSL_FILTERED <- datasets$get_data("ADSL", filtered = TRUE)
+     ADSL_FILTERED <- datasets$get_data("ADSL", filtered = FALSE)
      vars <- c("AGE", "AGEGR1", "RACE", "HEIGHTBL", "WEIGHTBL", "BMIBL")
      labels <- datasets$get_varlabels("ADSL", vars)
      labels <- vapply(vars, function(x) ifelse(is.na(labels[[x]]), 

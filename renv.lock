@@ -1057,9 +1057,9 @@
     },
     "pilot2wrappers": {
       "Package": "pilot2wrappers",
-      "Version": "0.5.0",
+      "Version": "0.10.0",
       "Source": "Cellar",
-      "Hash": "bf64790de80f08f677c361054eaceb7b",
+      "Hash": "5149cbe60fde65314b0bf836362eac78",
       "Requirements": [
         "Tplyr",
         "config",
@@ -1672,7 +1672,7 @@
       "Package": "teal",
       "Version": "0.11.1",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "TEAL",
       "Hash": "ad79297c93bd654f51e19a4b879f69b5",
       "Requirements": [
         "checkmate",
@@ -1695,7 +1695,7 @@
       "Package": "teal.code",
       "Version": "0.1.1",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "TEAL",
       "Hash": "cf26b243e9767770ed2a4dce6b9879ab",
       "Requirements": [
         "R6",
@@ -1711,7 +1711,7 @@
       "Package": "teal.data",
       "Version": "0.1.1",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "TEAL",
       "Hash": "afb508138f843ee8c45c8899a9a746e9",
       "Requirements": [
         "R6",
@@ -1731,7 +1731,7 @@
       "Package": "teal.logger",
       "Version": "0.1.0",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "TEAL",
       "Hash": "7c4547a5c24944a9f6aa8625c36677cc",
       "Requirements": [
         "glue",
@@ -1745,7 +1745,7 @@
       "Package": "teal.reporter",
       "Version": "0.1.0",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "TEAL",
       "Hash": "d571e15e0572499696a3d2ab144d8210",
       "Requirements": [
         "R6",
@@ -1763,7 +1763,7 @@
       "Package": "teal.slice",
       "Version": "0.1.1",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "TEAL",
       "Hash": "d3e274b20a2846c7887f7e60fe9240af",
       "Requirements": [
         "R6",
@@ -1784,7 +1784,7 @@
       "Package": "teal.transform",
       "Version": "0.1.1",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "TEAL",
       "Hash": "4f7e157538d6e6191381d665fdfbdc41",
       "Requirements": [
         "checkmate",
@@ -1809,7 +1809,7 @@
       "Package": "teal.widgets",
       "Version": "0.1.1",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "TEAL",
       "Hash": "e8225307ddc054a7bddeba9a2b5dd1ee",
       "Requirements": [
         "checkmate",

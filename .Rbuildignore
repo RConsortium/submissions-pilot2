@@ -1,5 +1,6 @@
 ^renv$
 ^renv\.lock$
+^\.renvignore
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^pilot1wrappers\.Rcheck$
