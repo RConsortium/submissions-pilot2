@@ -51,7 +51,10 @@ srv_g_kmplot <- function(input, output, session, datasets) {
         TRT01A = factor(TRT01A, levels = c("Placebo", "Xanomeline Low Dose",  "Xanomeline High Dose")),
         AVAL = AVAL/30.4167
       )
-    
+    # detect the error
+    validate(
+      need(nrow(anl) > 0, "No data for this selection.")
+    )
      
     ## -----------------------------------------------------------------------------------------------------------------------------------
     # estimate survival
