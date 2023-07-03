@@ -233,17 +233,6 @@
       ],
       "Hash": "9fe98599ca456d6552421db0d6772d8f"
     },
-    "box": {
-      "Package": "box",
-      "Version": "1.1.3",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "tools"
-      ],
-      "Hash": "ce8187a260e8e3abc2294284badc3b76"
-    },
     "brio": {
       "Package": "brio",
       "Version": "1.1.3",
@@ -1023,29 +1012,6 @@
       ],
       "Hash": "001cecbeac1cff9301bdc3775ee46a86"
     },
-    "lintr": {
-      "Package": "lintr",
-      "Version": "3.0.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "backports",
-        "codetools",
-        "crayon",
-        "cyclocomp",
-        "digest",
-        "glue",
-        "jsonlite",
-        "knitr",
-        "rex",
-        "stats",
-        "utils",
-        "xml2",
-        "xmlparsedata"
-      ],
-      "Hash": "b21ebd652d940f099915221f3328ab7b"
-    },
     "logger": {
       "Package": "logger",
       "Version": "0.2.2",
@@ -1402,33 +1368,6 @@
         "lazyeval"
       ],
       "Hash": "ae34cd56890607370665bee5bd17812f"
-    },
-    "rhino": {
-      "Package": "rhino",
-      "Version": "1.3.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "box",
-        "cli",
-        "config",
-        "fs",
-        "glue",
-        "lintr",
-        "logger",
-        "purrr",
-        "renv",
-        "rstudioapi",
-        "sass",
-        "shiny",
-        "styler",
-        "testthat",
-        "utils",
-        "withr",
-        "yaml"
-      ],
-      "Hash": "4254359242e97a77e07fe32659ac233e"
     },
     "rlang": {
       "Package": "rlang",
