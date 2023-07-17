@@ -16,14 +16,19 @@ ui_t_efficacy <- function(id, datasets) {
     tags$br(),
     tags$br(),
     fluidRow(
-      tippy::tippy(
-        h4("Primary Endpoint Analysis: Glucose (mmol/L) - Summary at Week 20 LOCF"),
-        tooltip = tooltip_text("Table is based on participants who have observable data at Baseline and Week 20", 16),
-        allowHTML = TRUE
-      ),
+      h4("Table 14-3.02"),
+      h4("Primary Endpoint Analysis: Glucose (mmol/L) - Summary at Week 20 LOCF"),
       tags$br(),tags$br(),
       column(
         width=10,
+        tippy::tippy(
+          tags$div(
+            align = "center",
+            h4("ANCOVA of Change from Baseline at Week 20")
+          ),
+          tooltip = tooltip_text("Table is based on participants who have observable data at Baseline and Week 20", 16),
+          allowHTML = TRUE
+        ),
         reactable::reactableOutput(ns("tbl_efficacy_1"))
       ) 
     ),
@@ -33,7 +38,10 @@ ui_t_efficacy <- function(id, datasets) {
     tags$hr(),
     fluidRow(
       tippy::tippy(
-        h4("Pairwise Comparison"),
+        tags$div(
+          align = "center",
+          h4("Pairwise Comparison")
+        ),
         tooltip = tooltip_text("Inference in this table is based on a Analysis of Covariance (ANCOVA) model with treatment and baseline value as covariates.", 16),
         allowHTML = TRUE
       ),

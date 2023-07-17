@@ -10,7 +10,11 @@
 #' @importFrom stats median sd
  ui_t_demographic <- function(id, datasets) {
    ns <- NS(id)
-   uiOutput(ns("table"))
+   tagList(
+    h4("Table 14-2.01"),
+    h4("Summary of Demographic and Baseline Characteristics"),
+    uiOutput(ns("table"))
+   )
  }
  
  #' srv_t_demographic Server Functions
@@ -28,9 +32,9 @@
      labels["AGEGR1"] <- "Age group"
      labels["AGE"] <- "Age (year)"
      labels["RACE"] <- "Race"
-     lyt <- basic_table(title = "Protocol: CDISCPILOT01",
-                        subtitles = "Population: Intent-to-Treat",
-                        main_footer = paste0(Sys.time())
+     lyt <- basic_table(title = "",
+                        subtitles = character(),
+                        main_footer = paste("Program: tm_t_demographic.R", Sys.time())
      ) %>%
        split_cols_by("TRT01P") %>%
        add_colcounts() %>%

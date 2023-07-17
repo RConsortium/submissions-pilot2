@@ -22,6 +22,8 @@ ui_g_kmplot <- function(id, datasets) {
       status = "info",
       dismissible = TRUE
     ),
+    h4("Figure 14-1"),
+    h4("Time to Dermatologic Event by Treatment Group"),
     plotOutput(ns("plot"), height = "800px")
   )
 }

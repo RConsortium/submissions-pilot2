@@ -10,6 +10,8 @@
 ui_t_primary <- function(id, datasets) {
   ns <- NS(id)
   tagList(
+    h4("Table 14-3.01"),
+    h4("Primary Endpoint Analysis: ADAS Cog(11) - Change from Baseline to Week 24 - LOCF"),
     uiOutput(ns("table")),
     p("Statistical model and comparison p-values removed when applying data filters. Refer to the application information for additional details."),
     p("[1] Based on Analysis of covariance (ANCOVA) model with treatment and site group as factors and baseline value as a covariate."),
