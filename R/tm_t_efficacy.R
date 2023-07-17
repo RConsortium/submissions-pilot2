@@ -134,7 +134,7 @@ srv_t_efficacy <- function(input, output, session, datasets) {
       mutate(
         comp = "Study Drug vs. Placebo",
         mean = fmt_ci(estimate, lower, upper),
-        p = ifelse(filter_active(datasets), "Not Applicable", fmt_pval(p.value))
+        p = fmt_pval(p.value)
       ) %>%
       select(comp:p)
     

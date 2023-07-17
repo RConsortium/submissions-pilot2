@@ -62,7 +62,7 @@ srv_t_primary <- function(input, output, session, datasets) {
 
 
     ## -----------------------------------------------------------------------------------------------------------------------------------
-    model_portion <- efficacy_models(adas, 'CHG', 24, !filter_active(datasets))
+    model_portion <- efficacy_models(adas, var = 'CHG', wk = 24, show_pvalue = TRUE)
 
 
     ## -----------------------------------------------------------------------------------------------------------------------------------
