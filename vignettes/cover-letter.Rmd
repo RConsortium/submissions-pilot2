@@ -33,7 +33,7 @@ body {
 }
 ```
 
-![The R consortium logo](https://www.r-consortium.org/wp-content/uploads/sites/13/2016/09/RConsortium_Horizontal_Pantone.png){.logo}
+![The R consortium logo](rconsortium.png){.logo}
 
 Food and Drug Administration  
 Center for Drug Evaluation and Research 5901-B Ammendale Road  
