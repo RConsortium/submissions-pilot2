@@ -1,10 +1,13 @@
 # pilot2wrappers 0.10.0
 
 - Add usage guide for application (#61)
-- Remove treatment variables from the `adtte` set prior to generating filters in KM plot module (#60)
-- Ensure data filters within the KM-Plot module are only applied to data sets inside that module, and not on the remaining modules (#59)
-* Add specific notes regarding filter usage and overlapping variables inside the KM module per user feedback
-* Fix typos in ADRG Quarto document
+- Remove treatment variables from the `adtte` set prior to generating filters in KM plot module (#60).
+- Ensure data filters within the KM-Plot module are only applied to data sets inside that module, and not on the remaining modules (#59).
+- Ensure inference p-values are still displayed within primary and efficacy tables after applying filters in KM-Plot module.
+- Add specific notes regarding filter usage and overlapping variables inside the KM module per user feedback.
+- Display a message to the user when filtered data does not contain enough observations for survival probabilities and confidence intervals in the KM-Plot module. A note in the ADRG has also been added for this situation.
+- Add note in ADRG regarding warning messages when restoring the `teal` and `teal.data` packages after the `renv` package library completes installation.
+- Correct typos in ADRG Quarto document.
 
 # pilot2wrappers 0.9.0
 
