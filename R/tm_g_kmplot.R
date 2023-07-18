@@ -55,7 +55,7 @@ srv_g_kmplot <- function(input, output, session, datasets) {
       )
     # detect the error
     validate(
-      need(nrow(anl) > 0, "No data for this selection.")
+      need(nrow(anl) > 5, "Not enough observations for this selection. Modify filters and try again.")
     )
      
     ## -----------------------------------------------------------------------------------------------------------------------------------
