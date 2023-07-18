@@ -2,7 +2,7 @@
 title: "Analysis Data Reviewer's Guide"
 author: "R Consortium"
 subtitle: "R Consortium R Submission Pilot 2"
-date: "2023-04-10"
+date: "2023-07-17"
 format: 
   pdf:
     number-sections: true
@@ -774,6 +774,10 @@ renv::restore(prompt = FALSE)
 
 The package installation procedure may take a few minutes or longer depending on internet bandwidth.
 
+::: callout-note
+After the restore process completes, the R console may give a warning message about packages such as `teal` not being installed from a CRAN-like repository. At the time of completing this Pilot, the `teal` and `teal.data` R packages were not released to CRAN. Instead, they were installed from a custom repository hosted on `insightsengineering.github.io`.
+:::
+
 ## Update Shiny Application Configuration
 
 The Shiny application needs one configuration update in order to import the ADaM data sets contained in the eCTD transfer. The data files are located in the following relative path within the eCTD transfer directory:
@@ -826,3 +830,9 @@ The **KM plot for TTDE** module allows for filters to be applied based on variab
 3.  In the **Active Filter Variables** widget, the selected variable with its available categories or levels will display. In this example, **AGEYR1** in this example) is displayed with three categories. If the selected variable in the previous step is a continuous variable, then a slider will appear for selecting a range of values.
 ![](figures/app_screenshot4.png){width="50%"}
 4.  Select the target subpopulation (e.g. `>80`) and the analysis output displayed on the left hand side will be updated in real-time according to the selection, which in this example is equivalent to performing a filter on the **ADSL** data by `AGEGR1 == '>80'`.
+
+::: callout-note
+When applying one or more filters in the KM-plot module, the filtered data set may not contain enough observations to produce reliable survival probabilities and associated 95% confidence intervals. In those situations, the application will present to the user a message indicating not enough observations based on the current filter selections.
+
+In addition, the R console could display warnings about value comparisons to a min or max cutoff. These warnings can be safely disregarded as they do not effect the filtered data set after processing is complete.
+:::
