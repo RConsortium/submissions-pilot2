@@ -677,9 +677,29 @@ To install and execute the Shiny application, follow all of the procedures below
 
 In addition, create a new directory to hold the unpacked Pilot 2 Shiny application files. For demonstration purposes, the procedures below assume the new directory is this location: `C:\pilot2_files`.
 
-## Installation of R and Optional Software
+## Installation of R and RStudio
 
 Download and install R 4.1.2 for Windows from <https://cran.r-project.org/bin/windows/base/old/4.1.2/R-4.1.2-win.exe>. While optional, It is also recommended to view the Shiny application within the RStudio IDE. You can download RStudio for Windows by visiting <https://www.rstudio.com/products/rstudio/download/#download>.
+
+## Installation of Rtools
+
+Due to certain R packages requiring compilation from source, it is also required that you install the **Rtools** Windows utility from CRAN. You can download Rtools built for R versions `4.0.0` - `4.1.3` by visiting <https://github.com/r-windows/rtools-installer/releases/download/2022-02-06/rtools40-x86_64.exe>. During the installation procedure, keep the default choices in the settings presented in the installation dialog.
+
+After the installation is complete, an additional configuration is required in order for R to locate the build tools offered by the Rtools utility. This procedure was adapted from the **Using Rtools on Windows** guide available at <https://cran.r-project.org/bin/windows/Rtools/rtools40.html>:
+
+* Launch a new R session, either through the default R GUI or RStudio
+* In the R console, run the following command:
+
+``` r
+write('PATH="${RTOOLS40_HOME}\\usr\\bin;${PATH}"', file = "~/.Renviron", append = TRUE)
+```
+
+* Restart your R session by closing and re-opening either the R GUI or RStudio. In the console, run the following command that should give the location of your Rtools installation:
+
+``` r
+Sys.which("make")
+## "C:\\rtools40\\usr\\bin\\make.exe"
+```
 
 ## Installation of R Packages
 
@@ -691,10 +711,6 @@ install.packages(c("remotes", "pkglite"))
 # install version 0.15.2 of the renv package:
 remotes::install_version("renv", version = "0.15.2")
 ```
-
-::: callout-note
-The console may display a warning message about Rtools being required to build R packages. However the packages required by the Shiny application will not require custom compilation involving other languages like C++, hence the Rtools utility is not required for the application.
-:::
 
 ## Extract Application Bundle
 
@@ -737,8 +753,6 @@ RStudio will refresh the window and automatically install the `renv` package int
 renv::restore(prompt = FALSE)
 ```
 
-The package installation procedure may take a few minutes or longer depending on internet bandwidth.
-
 ### Option 2: R Console {.unnumbered}
 
 Launch a new R session in the `pilot2wrappers` directory of the unpacked application directory. By default, the R Gui interface on Windows will launch a new R session in your default Windows home directory (typically the **Documents** folder). Perform the following steps to ensure R is launched in the proper directory.
@@ -772,10 +786,9 @@ The R GUI will launch and automatically install the `renv` package into the proj
 renv::restore(prompt = FALSE)
 ```
 
-The package installation procedure may take a few minutes or longer depending on internet bandwidth.
 
 ::: callout-note
-After the restore process completes, the R console may give a warning message about packages such as `teal` not being installed from a CRAN-like repository. At the time of completing this Pilot, the `teal` and `teal.data` R packages were not released to CRAN. Instead, they were installed from a custom repository hosted on `insightsengineering.github.io`.
+Due to certain R packages in the application requiring compilation, the entire package restoration procedure may require at least ten minutes or longer to complete depending on internet bandwidth and your computer's hardware profile. After the restoration process completes, the R console may give a warning message about not retrieving available packages from URL `https://insightsengineering.github.io/depository/2022_06_09/bin/windows/contrib/4.1`. At the time of completing this Pilot, the `teal` and `teal.data` R packages were not available on CRAN. Instead, they were installed from a custom repository hosted on `insightsengineering.github.io`.
 :::
 
 ## Update Shiny Application Configuration
@@ -799,6 +812,10 @@ To run the Shiny application, enter the following command in the R console:
 ``` r
 golem:::run_dev()
 ```
+
+::: callout-note
+After closing the application, you may see a warning appear in the R console regarding non-UTF charset. This can be safely ignored as this has no impact on the application session.
+:::
 
 # Appendix 2: Application Usage Guide {.unnumbered}
 
