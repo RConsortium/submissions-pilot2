@@ -42,6 +42,7 @@ Package: pilot2wrappers
 File: .Rprofile
 Format: text
 Content:
+  options("renv.config.mran.enabled" = FALSE)
   source("renv/activate.R")
 
 Package: pilot2wrappers
