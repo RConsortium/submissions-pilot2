@@ -27,7 +27,7 @@ devtools::build(path = "renv/cellar")
 devtools::build(path = "renv/cellar", binary = TRUE)
 
 # Install to renv library
-renv::install(file.path(getwd(), "renv/cellar/pilot2wrappers_0.5.0.tar.gz"))
+renv::install(file.path(getwd(), "renv/cellar/pilot2wrappers_0.10.0.tar.gz"))
 
 # Deploy
 

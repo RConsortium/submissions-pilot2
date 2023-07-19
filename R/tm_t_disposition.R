@@ -10,6 +10,8 @@
 ui_t_disposition <- function(id, datasets) {
   ns <- NS(id)
   tagList(
+    h4("Table 14-4.01"),
+    h4("Visit Completion"),
     uiOutput(ns("table")),
     p("Table is based on participants within the ITT population")
   )

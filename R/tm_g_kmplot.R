@@ -22,6 +22,8 @@ ui_g_kmplot <- function(id, datasets) {
       status = "info",
       dismissible = TRUE
     ),
+    h4("Figure 14-1"),
+    h4("Time to Dermatologic Event by Treatment Group"),
     plotOutput(ns("plot"), height = "800px")
   )
 }
@@ -51,7 +53,10 @@ srv_g_kmplot <- function(input, output, session, datasets) {
         TRT01A = factor(TRT01A, levels = c("Placebo", "Xanomeline Low Dose",  "Xanomeline High Dose")),
         AVAL = AVAL/30.4167
       )
-    
+    # detect the error
+    shiny::validate(
+      shiny::need(nrow(anl) > 5, "Not enough observations for this selection. Modify filters and try again.")
+    )
      
     ## -----------------------------------------------------------------------------------------------------------------------------------
     # estimate survival
