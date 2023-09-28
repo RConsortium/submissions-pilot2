@@ -25,6 +25,10 @@ repo demonstrates the eCTD submission package based on the [RConsortium/submissi
 
 [Repo wiki](https://github.com/RConsortium/submissions-pilot2/wiki)
 
+## FDA response
+
+[2023/09/28] Pilot 2 (shiny) FDA response letter received! [link](https://github.com/RConsortium/submissions-wg/blob/0f1dc5c30985d413f75d196c2b6caa96231b26ee/_Documents/Summary_R_Pilot2_Submission%2027SEP2023.pdf)
+
 ## Installing `teal` :
 
 Follow the link [here](https://github.com/insightsengineering/depository#readme)
